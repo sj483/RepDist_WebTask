@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sorry!</title>
+<meta charset="utf-8"/>
+
+<!-- Set the favicon logo -->
+<link rel="icon" href="./Logo.png" type="image/x-icon" />
+
+<!-- Import the user agent parser -->
+<script src="./Assets/ua-parser.pack.js"></script>
+
+<!-- Import the stylesheet -->
+<link rel="stylesheet" href="./Assets/w3.css">
+
+<!-- Some more styling -->
+<style>
+body {padding: 30px 0;}
+</style>
+
+<!-- Get jQuery -->
+<script src="./Assets/jquery.min.js"></script>
+
+<!-- Get participant IDs passed in from URL -->
+<script src="./GetPpantIds.js"></script>
+
+<!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
+<script src="./Assets/SetDateTime.js"></script>
+
+<script>
+
+// Define some global variables
+var OsId = null;
+var BrowserId = null;
+var UserAgentResult;
+
+// Function to get OS, Browser, and UserAgent (setting the above global vars)
+function GetOsAndBrowser() {
+    
+    var UserAgentParser = new UAParser();
+	UserAgentResult = UserAgentParser.getResult();
+	
+	OsId = UserAgentResult.os.name + '_' + UserAgentResult.os.version;
+	BrowserId = UserAgentResult.browser.name + '_' + UserAgentResult.browser.version;
+	
+	return new Promise(resolve => {resolve()});
+}
+
+
+// OnBodyLoad function
+function OnBodyLoad() {
+    
+    // Promise chain (GetOsAndBrowser + LogExclusion)
+    GetOsAndBrowser().then(function() {LogExclusion();});
+    
+    // If they are using IE, prep the message to display:
+    try {
+        if (UserAgentResult.browser.name.includes('IE')){
+    	    document.getElementById('Message').innerHTML = "<p>You are not able to run the experiment using Internet Explorer.<br /><br />Please download a newer web browser. We recommend <a href='https://www.google.com/chrome/'>Google Chrome</a>.</p>";
+        }
+    } catch(Err) {
+        if (UserAgentResult.browser.name == 'IE'){
+	        document.getElementById('Message').innerHTML = "<p>You are not able to run the experiment using Internet Explorer.<br /><br />Please download a newer web browser. We recommend <a href='https://www.google.com/chrome/'>Google Chrome</a>.</p>";
+        }
+    }
+    
+    // Display the main div:
+    document.getElementById('MainDiv').style.visibility = 'visible';
+}
+
+// LogExclusion function
+function LogExclusion() {
+    var Args = {};
+    Args.PoolId = PoolId;
+    Args.SubjectId = SubjectId;
+    Args.OS = OsId;
+    Args.Browser = BrowserId;
+    
+    // Construct the POST:
+    var JsonPost = {
+        type: "POST",
+        url: './LandingActions.php',
+        dataType: 'json',
+        data: {FunctionCall: 'LogExclusion', Args: Args},
+        success: function (Obj,Textstatus) {
+            if( !('error' in Obj) ) {
+                  return Obj.result;
+              }
+              else {
+                  console.log(Obj.error);
+              }
+        }
+    }
+    
+    // Submit the POST:
+    Vals = jQuery.ajax(JsonPost);
+    return new Promise(resolve => {resolve(Vals)});
+}
+</script>
+</head>
+
+<body onload="OnBodyLoad()">
+<div style="visibility:hidden;" id="MainDiv" class="w3-center">
+<h1>Sorry! &#129335;</h1>
+<div id='Message'><p>You are not able to run the experiment on this device.<br>Please use a laptop or desktop computer.</p></div>
+</div>
+</body>
+</html>

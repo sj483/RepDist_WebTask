@@ -64,7 +64,7 @@ async function LogLanding() {
         alert("An error has occured.\nPlease contant Sam: s.berens@sussex.ac.uk");
     }
     if (!IsEmpty(PpantIds)){
-    var P1 = await fetch('./LandingActions.php', {
+    var P1 = await fetch('./IndexActions.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json', 
