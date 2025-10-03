@@ -74,7 +74,8 @@ if($Conn->connect_error) {
             $TestBool = false;
             switch ($TaskId) {
                 case 'TItrain':
-                    if ($Interval > 86) {
+                    if ($Interval > 86) { //CHECK BACK ON THIS TIME INTERVALS,
+                        //BECAUSE NEW INSTRUCTIONS MIGHT BE SLIGHTLY DIFFERENT
                         $TestBool = true;
                     }
                     break;

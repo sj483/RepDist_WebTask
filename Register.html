@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sign up</title>
+
+<!-- Get jQuery -->
+<script src="./Assets/jquery.min.js"></script>
+
+<!-- Get participant IDs passed in from URL -->
+<script src="./GetPpantIds.js"></script>
+
+<!-- Exclusion check -->
+<script src="./ExclusionCheck.js"></script>
+
+<!-- Load the stylesheet -->
+<link rel="stylesheet" href="./Assets/w3.css">
+
+<!-- Load the favicon -->
+<link rel="icon" href="./Logo.png" type="image/x-icon" />
+
+<!-- More styling -->
+<style>
+body {
+    margin-left: 50px;
+    margin-top: 30px; 
+    margin-right: 50px; 
+}
+</style>
+
+<!-- reCAPTCHA v3 -->
+<script src="https://www.google.com/recaptcha/api.js?render=6Leg05YnAAAAABEQ2jrjEtbpROANGdTC5hJkzMtH"></script>
+<script>
+grecaptcha.ready(function() {
+    grecaptcha.execute('6Leg05YnAAAAABEQ2jrjEtbpROANGdTC5hJkzMtH', {action: 'homepage'}).then(function(token) {
+       // Do stuff here!
+    });
+});
+</script>
+
+<script>
+// Function to change handedness value
+var Handedness = 'Right';
+function ChangeHandedness(Value) {
+	Handedness = Value;
+}
+
+// Function to submit form
+var Gender;
+var L1;
+function SubmitForm() {
+	Gender = document.getElementById('Input_Gender').value;
+	L1 = document.getElementById('Input_L1').value;
+	
+	var Args = {
+	    SubjectId: SubjectId,
+		Gender: Gender,
+		L1: L1,
+		Handedness: Handedness};
+		
+	Register(Args)
+		.then(function(Result) {
+			// Send onwards after the Register action:
+			window.location.replace(Result.TargetUrl);
+		});
+	
+}
+
+// Function to post the data, replaced old funciton with
+/// new way of doing post
+async function Register(Args){
+    var P1 = await fetch('./RegisterActions.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({FunctionCall: 'Register', Args: Args})
+    });
+    url = await P1.TargetUrl;
+    return url;
+}
+
+
+</script>
+</head>
+
+<body>
+<h1>Welcome</h1>
+<h2>Please tell us about yourself...</h2>
+
+<div class="w3-container" style="width:600px">
+<form action="javascript:SubmitForm();">
+<table class="w3-table w3-bordered">
+<tbody>
+    
+    <tr>
+        <th>Gender<font style='color:red;'>*</font></th>
+        <td><input type="text" id="Input_Gender" name="Gender" required></td>
+    </tr>
+    
+    <tr>
+        <th>What language did you most<br>often use when you were a child?<font style='color:red;'>*</font></th>
+        <td>
+        <select id="Input_L1" name="L1" data-placeholder="Choose a Language..." required>
+            <option value="AF">Afrikanns</option>
+            <option value="SQ">Albanian</option>
+            <option value="AR">Arabic</option>
+            <option value="HY">Armenian</option>
+            <option value="EU">Basque</option>
+            <option value="BN">Bengali</option>
+            <option value="BG">Bulgarian</option>
+            <option value="CA">Catalan</option>
+            <option value="KM">Cambodian</option>
+            <option value="ZH">Chinese (Mandarin)</option>
+            <option value="HR">Croation</option>
+            <option value="CS">Czech</option>
+            <option value="DA">Danish</option>
+            <option value="NL">Dutch</option>
+            <option value="EN" selected="selected">English</option>
+            <option value="ET">Estonian</option>
+            <option value="FJ">Fiji</option>
+            <option value="FI">Finnish</option>
+            <option value="FR">French</option>
+            <option value="KA">Georgian</option>
+            <option value="DE">German</option>
+            <option value="EL">Greek</option>
+            <option value="GU">Gujarati</option>
+            <option value="HE">Hebrew</option>
+            <option value="HI">Hindi</option>
+            <option value="HU">Hungarian</option>
+            <option value="IS">Icelandic</option>
+            <option value="ID">Indonesian</option>
+            <option value="GA">Irish</option>
+            <option value="IT">Italian</option>
+            <option value="JA">Japanese</option>
+            <option value="JW">Javanese</option>
+            <option value="KO">Korean</option>
+            <option value="LA">Latin</option>
+            <option value="LV">Latvian</option>
+            <option value="LT">Lithuanian</option>
+            <option value="MK">Macedonian</option>
+            <option value="MS">Malay</option>
+            <option value="ML">Malayalam</option>
+            <option value="MT">Maltese</option>
+            <option value="MI">Maori</option>
+            <option value="MR">Marathi</option>
+            <option value="MN">Mongolian</option>
+            <option value="NE">Nepali</option>
+            <option value="NO">Norwegian</option>
+            <option value="FA">Persian</option>
+            <option value="PL">Polish</option>
+            <option value="PT">Portuguese</option>
+            <option value="PA">Punjabi</option>
+            <option value="QU">Quechua</option>
+            <option value="RO">Romanian</option>
+            <option value="RU">Russian</option>
+            <option value="SM">Samoan</option>
+            <option value="SR">Serbian</option>
+            <option value="SK">Slovak</option>
+            <option value="SL">Slovenian</option>
+            <option value="ES">Spanish</option>
+            <option value="SW">Swahili</option>
+            <option value="SV">Swedish </option>
+            <option value="TA">Tamil</option>
+            <option value="TT">Tatar</option>
+            <option value="TE">Telugu</option>
+            <option value="TH">Thai</option>
+            <option value="BO">Tibetan</option>
+            <option value="TO">Tonga</option>
+            <option value="TR">Turkish</option>
+            <option value="UK">Ukranian</option>
+            <option value="UR">Urdu</option>
+            <option value="UZ">Uzbek</option>
+            <option value="VI">Vietnamese</option>
+            <option value="CY">Welsh</option>
+            <option value="XH">Xhosa</option>
+            <option value="OT">--- OTHER ---</option>
+            </select>
+        </td>
+    </tr>
+    
+    <tr>
+        <th>Which hand do you<br>usually to write with?<font style='color:red;'>*</font></th>
+        <td>
+            <input type="radio" name="Handedness" id="Right" value="Right" onclick="ChangeHandedness(this.value)" checked> <label for="Right">Right</label>
+            <br>
+            <input type="radio" name="Handedness" id="Left" value="Left" onclick="ChangeHandedness(this.value)"> <label for="Left">Left</label>
+            <br>
+            <input type="radio" name="Handedness" id="Ambi" value="Ambi" onclick="ChangeHandedness(this.value)"> <label for="Ambi">Ambidextrous</label>
+        </td>
+    </tr>
+    
+    <tr>
+        <td><input type="submit" value="Submit"></td>
+        <td></td>
+    </tr>
+</tbody>
+</table>
+
+</form>
+</div>
+
+<p style="width:560px">
+<font style='color:red;'>*</font><i>Denotes a required field.</i>
+</p>
+
+</body>
+</html>

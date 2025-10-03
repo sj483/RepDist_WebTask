@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Task instructions</title>
+<meta charset="UTF-8">
+    
+<!-- Set the favicon logo -->
+<link rel="icon" href="./Logo.png" type="image/x-icon" />
+
+<!-- Import the stylesheet -->
+<link rel="stylesheet" href="./Assets/w3.css">
+
+<!-- Get jQuery -->
+<script src="./Assets/jquery.min.js"></script>
+
+<!-- Some more styling -->
+<style>
+body {padding: 30px 0;}
+
+.alert {
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+}
+
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.closebtn:hover {
+    color: black;
+}
+</style>
+
+<!-- Get participant IDs passed in from URL -->
+<script src="./GetPpantIds.js"></script>
+
+<!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
+<script src="./Assets/SetDateTime.js"></script>
+
+<!-- Exclusion check -->
+<script src="./ExclusionCheck.js"></script>
+
+<!-- Import the instruction text -->
+<script src="./InstructionText.js"></script>
+
+<!-- Import the warn status  -->
+<script src="./GetWarn.js"></script>
+
+<script>
+// OnBodyLoad function
+async function OnBodyLoad() {
+
+    //GET TASK ID
+  var P1 = await fetch('./GetTaskId.php', {
+		method: 'post',
+		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+		body: JSON.stringify({SubjectId: SubjectId})
+	})
+    //unpack the response into json
+    state = await P1.json();
+    if (state == 2) {
+        TaskId = 'TItrain';
+    } else if (state == 4) {
+        TaskId = 'TIprobe';
+    } else {
+        TaskId = false;
+    }
+
+    if (!TaskId) {
+        document.getElementById('TextArea').innerHTML = '<p>This page is for testing purposes only.</p><p>If you are reading this and you are not Sam Berens, something is horribly wrong. &#128516</p>';
+    } else if (TaskId==='TItrain') {
+        document.getElementById('TextArea').innerHTML = TItrain;
+        document.getElementById('Audio').src = './Assets/TItrain.mp3';
+    } else if (TaskId==='TIprobe') {
+        document.getElementById('TextArea').innerHTML = TIprobe;
+        document.getElementById('Audio').src = './Assets/TIprobe.mp3';
+    } else {
+        document.getElementById('TextArea').innerHTML = '<p>An error has occured.</p><p>Please contact the experimenter.</p>';
+    }
+    
+    //RETURN TO THIS BY CHECKING THE INSTRUCT TEXT JS FILE TO SEE WHAT TIPROBE AND TITRAIN VARIABLES
+    //ACTUALLY ARE !!!
+    //AND ALSO ADAPT ANY OLD PROMISE STUFF TO NEW FETCHS
+
+    if (Warn) {
+        //alert('Please listen to all the of the audio instructions!');
+        var Warning = document.createElement('div');
+        Warning.id = 'Warning';
+        Warning.className = 'alert';
+        Warning.innerHTML = "<span class=\"closebtn\" onclick=\"CloseWarning();\">" + 
+        "&times;</span><strong>Please listen to all the of the audio instructions!</strong>";
+        document.body.prepend(Warning);
+    }
+    
+    // Update the Canvas:
+    if (TaskId==='RC2') {
+        document.getElementById('AudioDiv').style.visibility = 'hidden';
+        document.getElementById('ButtonArea').innerHTML = '<button onclick="ProgressToNext()">Continue</button>';
+    }
+    
+    document.getElementById('Canvas').style.visibility = 'visible';
+}
+
+// Close warning function
+function CloseWarning() {
+    document.body.removeChild(document.getElementById('Warning'));
+}
+
+// Function to log that the instructions have been presented
+function LogInstruct() {
+    var JsonPost = {
+        type:"POST",
+        url:'./LandingActions.php', //RETURN HERE AS THIS FUNCTIONALITY SHOULD BE IN A SEPERATE PHP
+        //SCRIPT NOW
+        dataType: 'json',
+        data: {FunctionCall: 'LogInstruct', Args: {
+            SubjectId: SubjectId,
+            DateTime_Start: DateTime_Start,
+            ClientTimeZone: ClientTimeZone,
+            TaskId: TaskId
+        }},
+        success: function(Obj,Textstatus){
+            if( !('error' in Obj) ){
+                return Obj.result;
+            }
+        }
+    }
+    Response = jQuery.ajax(JsonPost);
+    return new Promise(resolve => {resolve(Response)});
+}
+
+// OnStartAudio function
+function OnStartAudio() {
+	UpdateDateTime();
+}
+
+// OnFinishAudio function
+function OnFinishAudio() {
+	document.getElementById('ButtonArea').innerHTML = '<button onclick="ProgressToNext()">Continue</button>';
+}
+
+// ProgressToNext function
+function ProgressToNext() {
+	LogInstruct().then(function(P3) {
+	    TargetUrl = P3.TargetUrl;
+	    if (window.location.href != TargetUrl) {
+            window.location.replace(TargetUrl);
+	    } else {
+	        location.reload();
+	    }
+    }).catch(function(Err) {
+        alert('An error has occurred.\nPlease report error code #200 to the experimenter:\n'+Err);
+        window.location.replace("./Error.html");
+    });
+}
+</script>
+</head>
+
+<body onload="OnBodyLoad()">
+
+<div id='Canvas' style='visibility:hidden;'>
+<center>
+<div id='AudioDiv'>
+<p><i>Please press play to hear the instructions read out through your speakers...</i></p> <!--CHECK BACK HERE WHY IT WOULD ONLY BE FOR RC1-->
+<audio controls onplay="OnStartAudio()" onended="OnFinishAudio()" id="Audio" src="./Assets/RC1.mp3" type="audio/wav"></audio>
+</div>
+</center>
+
+<div id="TextArea" style="max-width:800px; margin:0 auto"></div>
+<center><div id="ButtonArea"></div></center>
+</div>
+
+</body>
+</html>
