@@ -1,4 +1,6 @@
 <?php
+error_log("IndexActions.php called");
+error_log("Raw input: " . file_get_contents('php://input'));
 header('Content-Type: application/json');
 require __DIR__ . '/GetTargetUrl.php';
 require __DIR__ . '/Credentials.php';
@@ -11,7 +13,7 @@ $Result = array();
 
 //unpack the input
 $Input = json_decode(file_get_contents('php://input'), true);
-// Check inputs
+// Check input
 if (!isset($Input['FunctionCall']) ) {
     $Result['Error'] = 'No function name!';
 }
@@ -31,8 +33,9 @@ if (!isset($Result['Error'])) {
         case 'LogLanding':
             
             // Set PoolId, SubjectId, and Now:
-            $PoolId = $Inputs['PoolId'];
-            $SubjectId = $Inputs['SubjectId'];
+            $Input = $Input['Args'];
+            $PoolId = $Input['PoolId'];
+            $SubjectId = $Input['SubjectId'];
             $PoolId = mysqli_real_escape_string($Conn,$PoolId);
             $SubjectId = mysqli_real_escape_string($Conn,$SubjectId);
             $Now = new DateTimeImmutable("now", new DateTimeZone('Europe/London'));

@@ -3,7 +3,7 @@
 <head>
 
 <title>Welcome</title>
-<link rel="icon" href="./Logo.png" type="image/x-icon" />
+<link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
 <link rel="stylesheet" href="./Assets/w3.css">
 
 <style>
@@ -33,6 +33,7 @@ function IsEmpty(Obj) {
 	return true;
 }
 
+
 //NEW...
 async function GenSubjectId(PID) {
     var P1 = await fetch('./GenSubjectId.php', {
@@ -43,8 +44,7 @@ async function GenSubjectId(PID) {
         body: JSON.stringify({PID: PID}),
     });
     result = await P1.json();
-    SubjectId = result.SubjectId; 
-    return SubjectId;
+    return result;
     }
 //
 
@@ -61,7 +61,8 @@ async function LogLanding() {
         PpantIds.PoolId = PoolId;
         PpantIds.SubjectId = SubjectId;
     } else {
-        alert("An error has occured.\nPlease contant Sam: s.berens@sussex.ac.uk");
+        alert("A error has occured.\nPlease contant Sam: s.berens@sussex.ac.uk");
+        alert('error 1')
     }
     if (!IsEmpty(PpantIds)){
     var P1 = await fetch('./IndexActions.php', {
@@ -74,7 +75,7 @@ async function LogLanding() {
             Args: PpantIds, 
         }),
     });
-    result = await P1.json(); //this results has an 'Error' field and a 'TargetUrl' field  
+    result = await P1.json(); //this result has an 'Error' field and a 'TargetUrl' field  
     } else {
         result = { Destination: null };
     }
@@ -82,7 +83,7 @@ async function LogLanding() {
 }
 //
 
-//PICK UP TOMORROW !!!
+//NOTE - ANY FUNCTION YOU PREVIOUSLY CHANGED TO BE ASNYNC NOW NEEDS TO HAVE ITS OUTPUT AWAITED ON!
 
 function OnBodyLoad() {
     // Show form if needed:
@@ -103,7 +104,7 @@ function OnBodyLoad() {
     });
 }
 
-function SubmitForm() {
+async function SubmitForm() {
     var A = document.getElementById('Input_PID').value;
     var B = document.getElementById('Input_SID').value;
     if (A.length > 20) {
@@ -112,15 +113,19 @@ function SubmitForm() {
         PoolId = B;
     }
     if (!Boolean(PoolId)) {
-        alert("Please enter a valid Prolific ID or Sussex username.")
+        alert("Please enter a valid Prolific ID or Sussex username.") ///THIS IS WRONG NOW BECAUSE SONA GIVES THEM ANOTHER
+        // CODE NOT THE USERNAME BUT THEY PROBABLY WONT SEE IT APART FROM IN THEIR URL
     } else {
-        P1 = GenSubjectId(PoolId)
-            .then(function(P1) {SubjectId = P1.SubjectId;})
+  
+            await GenSubjectId(PoolId)
+            .then(function(P1) {
+            SubjectId = P1.SubjectId;})
             .then(function(  ) {P2 = LogLanding(); return P2;})
             .then(function(P2) {
                 if (Boolean(P2.TargetUrl)) {
                     window.location.replace(P2.TargetUrl);
                 } else {
+                    alert('error 5 ')
                     window.location.replace("./Error.html?PoolId="+PoolId+"&SubjectId="+SubjectId+"#");
                 }
             });
@@ -130,6 +135,7 @@ function SubmitForm() {
 // --- Execute functions ---
 var GetUserInput = false;
 if ((!PoolId) && (!SubjectId)) {
+    alert('error 2')
     // Get user input
     GetUserInput = true;
     
@@ -137,22 +143,25 @@ if ((!PoolId) && (!SubjectId)) {
     // Call GenSubjectId, no user input required, and then redirect:
     
     if (!PoolId && Boolean(SubjectId)) {
-        P1 = LogLanding()
-        .then(function(P1) {
+        LogLanding().then(function(P1) {
             if (Boolean(P1.TargetUrl)) {
                 window.location.replace(P1.TargetUrl);
             } else {
+                alert('error 3 ')
                 window.location.replace("./Error.html?PoolId="+PoolId+"&SubjectId="+SubjectId+"#");
             }
         })
     } else {
-        P1 = GenSubjectId(PoolId)
-            .then(function(P1) {SubjectId = P1.SubjectId;})
-            .then(function(  ) {P2 = LogLanding(); return P2;})
+            GenSubjectId(PoolId)
+            .then(function(P1) {
+                SubjectId = P1.SubjectId;
+            return LogLanding();
+            })
             .then(function(P2) {
                 if (Boolean(P2.TargetUrl)) {
                     window.location.replace(P2.TargetUrl);
                 } else {
+                    alert('error 4 ')
                     window.location.replace("./Error.html?PoolId="+PoolId+"&SubjectId="+SubjectId+"#");
                 }
             });
