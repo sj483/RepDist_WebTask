@@ -19,7 +19,7 @@ function GetWarn() {
 	}
 	var IsEmpty = true;
 	for (var Key in UrlParams) {
-	    if (UrlParams.hasOwnProperty(Key)) {
+	    if (UrlParams.hasOwnProperty(Key)) { //COME BACK TO THIS WHAT DOES THIS BIT DO
 	        IsEmpty = false;
 	    }
 	}

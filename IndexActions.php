@@ -6,7 +6,6 @@ require __DIR__ . '/GetTargetUrl.php';
 require __DIR__ . '/Credentials.php';
 
 
-//THIS IS JUST HERE TO DEAL WITH ERRORS TO LANDINGACTION CALLS?
 // Preallocate the result (which will contain the direction):
 $Result = array();
 
