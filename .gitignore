@@ -3,3 +3,5 @@ Credentials.php
 /SQL/*.sql
 /Imgs/*.png
 /Trash
+/IP.js
+/Encrypt_details.php
