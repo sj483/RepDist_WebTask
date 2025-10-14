@@ -2,11 +2,6 @@
 header('Content-Type: application/json');
 require __DIR__ . '/GetTargetUrl.php';
 require __DIR__ . '/Credentials.php';
-///RETURN TO THIS - THIS IS THE LOGIC OG FROM LANDING ACTIONS.PHP WHICH 
-//NEEDS TO BE ADAPTED TO JUST HAVE BEEN CALLED FROM THE INSTRUCT PAGE 
-
-//YOU ALSO NEED TO ADD THE LOGIC WHICH CHECKES WHETHER THE STATE IS 2 OR 4
-//AND RETURNS EITHER THE TI TRAIN OR TI PROBE TEXT ACCORDINGLY
 
 
 // A function that formats datetime strings for SQL insertion
@@ -40,6 +35,17 @@ function GetTimeInterval($A, $B) {
     }
     return $Interval;
 }
+
+// Preallocate the result:
+$Result = array();
+
+//unpack the input
+$Input = json_decode(file_get_contents('php://input'), true);
+//check input
+if (!isset($Input['Args'])) {
+    $Result['Error'] = 'No function arguments!';
+}
+$Inputs = $Input['Args'];
 
 
 // Connect to the database:
@@ -103,7 +109,7 @@ if($Conn->connect_error) {
                         $State = $Row["State"];
                     }
                 }
-                /// NOT %100 ON THIS LOGIC COME BACK TO THIS
+                // Increment State because they have read instructions and are ready to do the task
                 if ($State == 2){
                     $State = 3;
                 }else if ($State == 4){
@@ -120,7 +126,7 @@ if($Conn->connect_error) {
                     
                 }
 		    
-			    // Run and set the result:
+			    // Redirect them to either the TI train or TI probe page
 			    if ($Conn->query($Sql01)===true) {
 			        $Url = GetTargetUrl($Conn, $SubjectId);
                     $Result['TargetUrl'] = $Url;
@@ -146,7 +152,7 @@ if($Conn->connect_error) {
                 // Record this naughtiness
                 $Sql03 = "INSERT INTO InstructNaughtiness (SubjectId, State, TaskId, DateTime_Naughty) VALUES ('$SubjectId', $State, '$TaskId', '$DateTime_Instruct')";
                 if ($Conn->query($Sql03)===true) {
-			        $Result['TargetUrl'] = "https://c01.learningandinference.org/Instruct.html?SubjectId=$SubjectId&TaskId=$TaskId&Warn=true#";
+			        $Result['TargetUrl'] = "./Instruct.html?SubjectId=$SubjectId&TaskId=$TaskId&Warn=true#";
 			    } else {
 			        $Conn->close();
 			        die('Query Sql03 failed to execute successfully;');
@@ -154,5 +160,5 @@ if($Conn->connect_error) {
                 
             }
             $Conn->close();
-
+            echo json_encode($Result);
             ?>

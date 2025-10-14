@@ -78,32 +78,23 @@ async function OnBodyLoad() {
         document.getElementById('TextArea').innerHTML = '<p>This page is for testing purposes only.</p><p>If you are reading this and you are not Sam Berens, something is horribly wrong. &#128516</p>';
     } else if (TaskId==='TItrain') {
         document.getElementById('TextArea').innerHTML = TItrain;
-        document.getElementById('Audio').src = './Assets/TItrain.mp3';
+        document.getElementById('Audio').src = './Assets/oldTItrain.mp3'; //CHANGE TO NEW AUDIO FILE WHEN READY
     } else if (TaskId==='TIprobe') {
         document.getElementById('TextArea').innerHTML = TIprobe;
-        document.getElementById('Audio').src = './Assets/TIprobe.mp3';
+        document.getElementById('Audio').src = './Assets/oldTIprobe.mp3'; //CHANGE TO NEW AUDIO FILE WHEN READY
     } else {
         document.getElementById('TextArea').innerHTML = '<p>An error has occured.</p><p>Please contact the experimenter.</p>';
     }
-    
-    //RETURN TO THIS BY CHECKING THE INSTRUCT TEXT JS FILE TO SEE WHAT TIPROBE AND TITRAIN VARIABLES
-    //ACTUALLY ARE !!!
-    //AND ALSO ADAPT ANY OLD PROMISE STUFF TO NEW FETCHS
 
-    if (Warn) {
+
+    if (Warn) {    
         //alert('Please listen to all the of the audio instructions!');
         var Warning = document.createElement('div');
         Warning.id = 'Warning';
         Warning.className = 'alert';
         Warning.innerHTML = "<span class=\"closebtn\" onclick=\"CloseWarning();\">" + 
-        "&times;</span><strong>Please listen to all the of the audio instructions!</strong>";
+        "&times;</span><strong>Please listen to all of the audio instructions!</strong>";
         document.body.prepend(Warning);
-    }
-    
-    // Update the Canvas:
-    if (TaskId==='RC2') {
-        document.getElementById('AudioDiv').style.visibility = 'hidden';
-        document.getElementById('ButtonArea').innerHTML = '<button onclick="ProgressToNext()">Continue</button>';
     }
     
     document.getElementById('Canvas').style.visibility = 'visible';
@@ -115,27 +106,27 @@ function CloseWarning() {
 }
 
 // Function to log that the instructions have been presented
-function LogInstruct() {
-    var JsonPost = {
-        type:"POST",
-        url:'./LandingActions.php', //RETURN HERE AS THIS FUNCTIONALITY SHOULD BE IN A SEPERATE PHP
-        //SCRIPT NOW
-        dataType: 'json',
-        data: {FunctionCall: 'LogInstruct', Args: {
+async function LogInstruct() {
+    var P1 = await fetch('./InstructActions.php',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({Args:{ 
             SubjectId: SubjectId,
             DateTime_Start: DateTime_Start,
             ClientTimeZone: ClientTimeZone,
             TaskId: TaskId
-        }},
-        success: function(Obj,Textstatus){
-            if( !('error' in Obj) ){
-                return Obj.result;
-            }
+        }})
+    });
+    data = await P1.json();
+        if (data.Error) {
+            alert(data.Error)
         }
+    return data;
     }
-    Response = jQuery.ajax(JsonPost);
-    return new Promise(resolve => {resolve(Response)});
-}
+
+
 
 // OnStartAudio function
 function OnStartAudio() {
@@ -149,8 +140,8 @@ function OnFinishAudio() {
 
 // ProgressToNext function
 function ProgressToNext() {
-	LogInstruct().then(function(P3) {
-	    TargetUrl = P3.TargetUrl;
+	LogInstruct().then(function(P2) {
+	    TargetUrl = P2.TargetUrl;
 	    if (window.location.href != TargetUrl) {
             window.location.replace(TargetUrl);
 	    } else {
@@ -169,8 +160,8 @@ function ProgressToNext() {
 <div id='Canvas' style='visibility:hidden;'>
 <center>
 <div id='AudioDiv'>
-<p><i>Please press play to hear the instructions read out through your speakers...</i></p> <!--CHECK BACK HERE WHY IT WOULD ONLY BE FOR RC1-->
-<audio controls onplay="OnStartAudio()" onended="OnFinishAudio()" id="Audio" src="./Assets/RC1.mp3" type="audio/wav"></audio>
+<p><i>Please press play to hear the instructions read out through your speakers...</i></p> 
+<audio controls onplay="OnStartAudio()" onended="OnFinishAudio()" id="Audio" src="./Assets/oldTItrain.mp3" type="audio/wav"></audio>
 </div>
 </center>
 

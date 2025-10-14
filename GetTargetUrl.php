@@ -47,6 +47,8 @@ function GetTargetUrl($Dbc, $SId) {
 		
 		
 	} else {
+		//debugging
+		die("'$State'");
 		// DECIDE THIS !
 		// Finished all tasks (State=5) * add a call to landingactions.php in TIProbe 
 		//return "./Complete.html?SubjectId=$SId#";
