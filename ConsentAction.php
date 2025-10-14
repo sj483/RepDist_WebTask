@@ -30,7 +30,7 @@ if (isset($_POST['checkbox']) && $_POST['checkbox'] =='check') {
     $DateTime_Consent = $Now->format('Y-m-d\TH:i:s');
     
     // Update Register:
-    $Sql0 = "UPDATE Register SET `State` = 1, DateTime_Consent = '$DateTime_Consent' WHERE SubjectId = '$SubjectId'";
+    $Sql0 = "UPDATE Register SET State = 1, DateTime_Consent = '$DateTime_Consent' WHERE SubjectId = '$SubjectId'";
     if ($Conn->query($Sql0) == false) {
         die("Query Sql0 failed to execute successfully!");
     }

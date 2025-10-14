@@ -79,7 +79,7 @@ function LogExclusion() {
     // Construct the POST:
     var JsonPost = {
         type: "POST",
-        url: './LandingActions.php',
+        url: './ExcludeActions.php',
         dataType: 'json',
         data: {FunctionCall: 'LogExclusion', Args: Args},
         success: function (Obj,Textstatus) {

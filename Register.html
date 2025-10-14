@@ -29,13 +29,7 @@ body {
 
 <!-- reCAPTCHA v3 -->
 <script src="https://www.google.com/recaptcha/api.js?render=6Leg05YnAAAAABEQ2jrjEtbpROANGdTC5hJkzMtH"></script>
-<script>
-grecaptcha.ready(function() {
-    grecaptcha.execute('6Leg05YnAAAAABEQ2jrjEtbpROANGdTC5hJkzMtH', {action: 'homepage'}).then(function(token) {
-       // Do stuff here!
-    });
-});
-</script>
+<!--<script src="reCaptcha.js"></script> -->
 
 <script>
 // Function to change handedness value
@@ -50,12 +44,14 @@ var L1;
 function SubmitForm() {
 	Gender = document.getElementById('Input_Gender').value;
 	L1 = document.getElementById('Input_L1').value;
+    BMY = document.getElementById('Input_BMY').value;
 	
 	var Args = {
 	    SubjectId: SubjectId,
 		Gender: Gender,
 		L1: L1,
-		Handedness: Handedness};
+		Handedness: Handedness,
+        BMY: BMY};
 		
 	Register(Args)
 		.then(function(Result) {
@@ -65,18 +61,17 @@ function SubmitForm() {
 	
 }
 
-// Function to post the data, replaced old funciton with
-/// new way of doing post
+
 async function Register(Args){
     var P1 = await fetch('./RegisterActions.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
-        },
+        }, 
         body: JSON.stringify({FunctionCall: 'Register', Args: Args})
     });
-    url = await P1.TargetUrl;
-    return url;
+    data = await P1.json();
+    return data;
 }
 
 
@@ -186,6 +181,12 @@ async function Register(Args){
             <input type="radio" name="Handedness" id="Left" value="Left" onclick="ChangeHandedness(this.value)"> <label for="Left">Left</label>
             <br>
             <input type="radio" name="Handedness" id="Ambi" value="Ambi" onclick="ChangeHandedness(this.value)"> <label for="Ambi">Ambidextrous</label>
+        </td>
+    </tr>
+    <tr>
+        <th>What month and year <br>were you born in?<font style='color:red;'>*</font></th>
+        <td>
+            <input type="month" name="BMY" id="Input_BMY"> 
         </td>
     </tr>
     

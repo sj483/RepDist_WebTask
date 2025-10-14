@@ -3,17 +3,17 @@ header('Content-Type: application/json');
 require __DIR__ . '/GetTargetUrl.php';
 require __DIR__ . '/Credentials.php';
 
-//unpack the input
+// Decode JSON input (fetch was used to call this script, not like the consent form)
 $Input = json_decode(file_get_contents('php://input'), true);
 
 $Result = array();
-if (!isset($Input['FunctionCall'])) {
-	die('No function name!');
-}
-if (!isset($_POST['Args'])) {
-	die('No function arguments!');
-}
 
+if (!isset($Input['FunctionCall'])) {
+	die("No function name!");
+}
+if (!isset($Input['Args'])) {
+	die("No function arguments!"); 
+}
 $Conn = new mysqli($Servername, $Username, $Password, $Dbname);
 if($Conn->connect_error) {
 	die("Connection failed: " . $Conn->connect_error);
@@ -42,6 +42,9 @@ switch($Input['FunctionCall']) {
 		// Define Handedness:
 		$Handedness = $Input["Handedness"];
 		$Handedness = mysqli_real_escape_string($Conn,$Handedness);
+
+		$BMY = $Input["BMY"];
+		$BMY = mysqli_real_escape_string($Conn,string: $BMY);
 		
 		// Define DateTime_Register
 		$DateTime_Register = $Now->format('Y-m-d\TH:i:s');
@@ -52,8 +55,9 @@ switch($Input['FunctionCall']) {
 	    	Gender = '$Gender', 
 	    	L1 = '$L1',
 	    	Handedness = '$Handedness', 
-	    	DateTime_Register = '$DateTime_Register' 
-	    	WHERE SubjectId = '$SubjectId'";
+			BMY = '$BMY', 		
+	    	DateTime_Register = '$DateTime_Register'
+			WHERE SubjectId = '$SubjectId'";
 		
 		// Run Sql:
 		if ($Conn->query($Sql) === true) {
