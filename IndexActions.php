@@ -72,8 +72,6 @@ if (!isset($Result['Error'])) {
 					die('Query Sql01 failed to execute successfully!');
 				    }
 
-            //COME BACK TO CHECK THIS WORKS LATER (LOGIC ABOUT IF THEY'VE BEEN TO A PAGE BEFORE - MIGHT HAVE TO EDIT
-            //GET TARGET URL TO MAKE SURE IT SENDS THEM TO THE RIGHT PLACE)    
             } else {
                 // They have been here before!
                 // Log the Relanding

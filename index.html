@@ -81,9 +81,6 @@ async function LogLanding() {
     }
     return result; //result get used later with window.location.replace (see SubmitForm)
 }
-//
-
-//NOTE - ANY FUNCTION YOU PREVIOUSLY CHANGED TO BE ASNYNC NOW NEEDS TO HAVE ITS OUTPUT AWAITED ON!
 
 function OnBodyLoad() {
     // Show form if needed:
@@ -113,7 +110,7 @@ async function SubmitForm() {
         PoolId = B;
     }
     if (!Boolean(PoolId)) {
-        alert("Please enter a valid Prolific ID or Sussex username.") ///THIS IS WRONG NOW BECAUSE SONA GIVES THEM ANOTHER
+        alert("Please enter a valid Prolific ID or Sussex username.") //Come back to this: THIS IS WRONG NOW BECAUSE SONA GIVES THEM ANOTHER
         // CODE NOT THE USERNAME BUT THEY PROBABLY WONT SEE IT APART FROM IN THEIR URL
     } else {
   

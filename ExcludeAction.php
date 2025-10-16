@@ -17,7 +17,6 @@ if (!isset($Input['FunctionCall']) ) {
 if (!isset($Input['Args'])) {
     $Result['Error'] = 'No function arguments!';
 }
-//debugging
 
 // Connect to the database:
 $Conn = new mysqli($Servername, $Username, $Password, $Dbname);

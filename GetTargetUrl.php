@@ -25,21 +25,32 @@ function GetTargetUrl($Dbc, $SId) {
 		return "./Register.html?SubjectId=$SId#";
 	
 	} else if ($State == 2 or $State == 4) {
-		// this should be called in RegActions
+		// this should be called in RegActions/ WriteTaskIO
+		//state 2 means they have registered but not done instructs yet
+		//state 4 means they have done TItrain and not done instructs for probe yet
 		return "./Instruct.html?SubjectId=$SId#";
 		//Once instructions duration has passed we update state with instruct actions to 3...
 		//initially sends to TI train
 		//second time people lands, instruct ations updates state to 5 and sends them to TIprobe	
 	
 	} else if ($State == 3) {
-		// this should be called in instruct actions
+		//means they have finished listening to instructs
+		//and are ready to start task
+		//(called in instruct actions)
+		//they will stay in state 3 until they finish TItrain
 		return "./TItrain.html?SubjectId=$SId#";	
 		//After TItrain, WriteXIO.php is called to update state to 4 which sends them back 
 		//to Instruct page once again 
 
 	} else if ($State == 5) {
-		// Begin probe phase! * add a call to landingactions.php in TIPtrain
-		//return "./TIProbe.html?SubjectId=$SId#";		
+		return "./TIprobe.html?SubjectId=$SId#";
+		//means that they have finished listening to the probe instructions and are 
+		//ready to do the task	
+		
+	} else if ($State == 6) {
+		//this means they have finished TIprobe and are ready to go to the end
+		//and sent back to SONA for credit/ prolific
+		return "./End.html?SubjectId=$SId#"	;
 		
 	} else if ($State < 0) {
 		// Kicked off

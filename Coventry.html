@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sorry!</title>
+<link rel="stylesheet" href="./Assets/w3.css">
+<link rel="icon" href="./Logo.png" type="image/x-icon" />
+
+<style>
+body {
+    margin-left: 50px;
+    margin-top: 20px; 
+    margin-right: 50px; 
+}
+</style>
+
+<!-- Get participant IDs passed in from URL -->
+<script src="./GetPpantIds.js"></script>
+
+<script>
+async function GetReason() {
+    // Set the data to send
+    var Data = {
+        SubjectId: SubjectId,
+        Href: window.location.href
+    };
+
+    // Send the data
+    var P1 = await fetch('./CoventryActions.php', {
+		method: 'post',
+		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+		body: JSON.stringify(Data)
+	});
+
+    // Return the Result ...
+    // ... an object with one property, 'HTML'.
+    var Result = await P1.json();
+    return Result;
+}
+
+function OnBodyLoad(){
+    if (SubjectId) {
+        GetReason().then(function(P1){
+            var iHTML = P1.HTML;
+            document.getElementById('Message').innerHTML = iHTML;
+            document.getElementById('Message').style = "max-width:700px;visibility:visible;";
+        });
+    } else {
+        document.getElementById('Message').style = "max-width:700px;visibility:visible;";
+    }
+}
+</script>
+</head>
+
+<body onload="OnBodyLoad()">
+<div class="w3-container" style="max-width:700px;visibility:hidden" id ="Message">
+</div>
+</body>
+</html>
