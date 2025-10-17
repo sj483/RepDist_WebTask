@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TI Probe</title>
+
+<!-- Set the favicon logo -->
+<link rel="icon" href="./Logo.png" type="image/x-icon" />
+
+<!-- Unpack the main JSpsych module -->
+<script src="https://unpkg.com/jspsych@7.3.3"></script>
+
+<!-- JSpsych dependency to fullscreen -->
+<script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.1.2"></script>
+
+<!-- JSpsych dependency for HTML button response -->
+<script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+
+<!-- JSpsych dependency for preloading -->
+<script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+
+<!-- JSpsych dependency for styling -->
+<link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" />
+
+<!-- Styling -->
+ <script>
+var ScreenHeight = window.screen.height;
+var heightFactor = 13/27; // Proportion of screen height to use for imgs
+var BorderWidth = 2;
+var ImgWidth0 = ScreenHeight * heightFactor;
+var ImgWidth1 = ImgWidth0 - (2*BorderWidth);
+</script>
+<style>
+img:hover{border: 2px solid #00ffff;width: 516px;}
+body{background-color:#808080;}
+</style>
+    
+<script>
+// --- TaskIO SETUP ---
+var TaskIO = {};
+TaskIO.SubjectId = null;
+TaskIO.DateTime_Start = null;
+TaskIO.ClientTimeZone = null;
+TaskIO.Pairs = {};
+TaskIO.Trials = [];
+</script>
+
+<!-- Get participant IDs passed in from URL -->
+<script src="./GetPpantIds.js"></script>
+
+<!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
+<script src="./Assets/SetDateTime.js"></script>
+
+<!-- Exclusion check -->
+<script src="./Assets/ExclusionCheck.js"></script>
+
+<!-- Import unfocus checking -->
+<script src="./LogUnfocus.js"></script>
+
+<!-- Import helper functions -->
+<script src="./FunctionSpec.js"></script>
+
+<!-- Import objects -->
+<script src="./ObjectSpec.js"></script>
+  
+<script>
+// Function to get the timeline variables
+async function GetTimelineVars() {
+    var Timeline = [];
+    for (iRep = 0; iRep < 2; iRep++) { // We normally run 2 reps
+        var Order = [0,1,2,3,4,5,6,7];
+        Shuffle(Order);
+        for (iOrder = 0; iOrder < 8; iOrder++) {
+            var cPairId = Pairs[Order[iOrder]].PairId;
+            var cPos = Pairs[Order[iOrder]].Pos;
+            var cNeg = Pairs[Order[iOrder]].Neg;
+            var cP1 = await fetch('./Assets/RandBit.php');
+            var cBit = await cP1.json();
+            cBit = cBit==1;
+            Timeline.push({PairId:cPairId,Pos:cPos,Neg:cNeg,PosOnRight:cBit});
+        }
+    }
+    return Timeline;
+}
+
+// Function to save the TaskIO variable
+async function WriteTaskIO() {
+    var Data = {};
+    Data.FunctionCall = 'WriteTIprobeIO';
+	Data.SubjectId = SubjectId;
+    Data.ClientTimeZone = ClientTimeZone;
+    Data.TIprobeIO = JSON.stringify(TaskIO);
+
+    //Send data to php script
+	var P1 = await fetch('./WriteXIO.php', {
+		method: 'post',
+		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+		body: JSON.stringify(Data)
+	});
+
+    // Return the result
+    var Result = await P1.json();
+    return Result.TargetUrl;
+}
+
+// Specify the EnterFullscreen event
+var EnterFullscreen = {
+    type: jsPsychFullscreen,
+    message: '<p style="color:black;font-size:30px;">Just a few more trials to go. This will only take 1 extra minute.</p><p style="color:black;font-size:30px;">You will not get any feedback on these trials.</p><p style="color:black;font-size:30px;">Please try to respond to each one, even if you have to guess.</p><p style="color:black;font-size:30px;">Click the button below to continue.</p>',
+    fullscreen_mode: true,
+    delay_after: 1000,
+    on_finish: function() {EnforceUnfocus = true;}
+};
+
+// Chain together the following...
+// ... 1) GetAssignment()
+// ... 2) Make the Pairs variable
+// ... 3) GetTimelineVars()
+// ... 4) Make the TrialLoop
+// ... 5) Call jsPsych.run([TrialLoop])
+async function StartUp() {
+    // (1)...
+    Assignment = await GetAssignment();
+
+    // (2)...
+    for (iPair = 0; iPair < 5; iPair++){
+        var Pos = 't'+String.fromCharCode(65+iPair);
+        var Neg = 't'+String.fromCharCode(66+iPair);
+        Pairs.push({PairId:iPair,Pos:Assignment[Pos],Neg:Assignment[Neg]});
+    }
+    Pairs.push({
+        PairId:5,
+        Pos:Assignment['tB'],
+        Neg:Assignment['tD']
+    });
+    Pairs.push({
+        PairId:6,
+        Pos:Assignment['tC'],
+        Neg:Assignment['tE']
+    });
+    Pairs.push({
+        PairId:7,
+        Pos:Assignment['tB'],
+        Neg:Assignment['tE']
+    });
+    TaskIO.Pairs = Pairs;
+
+    // (3)...
+    TimelineVars = await GetTimelineVars();
+
+    // (4)...
+    var TrialLoop = {
+        timeline: [Fixation,Trial],
+        timeline_variables: TimelineVars,
+        randomize_order: false
+    };
+
+    // (5)...
+    jsPsych.run([PreloadImgs,EnterFullscreen,TrialLoop,ExitFullscreen]);
+}
+StartUp();
+
+</script>
+</head>
+<body>
+</body>
+</html>

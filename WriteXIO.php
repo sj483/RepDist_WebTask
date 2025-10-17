@@ -40,7 +40,8 @@ switch($FunctionCall) {
 			//be in state 3?Even if they got on there some other way they
 			//they should do TI probe next so its ok to set state to 4?
 			$State = 4; 
-			$Sql02 = "UPDATE Register SET State = $State WHERE SubjectId ='$SubjectId'";
+			$Sql02 = "UPDATE Register SET State = $State, DateTime_TItrain = '$DateTime_Write'
+			 WHERE SubjectId ='$SubjectId'";
 			if(($Conn->query($Sql02)===true)) {
 				// send them the Instruct page for probe info
 				$Result['TargetUrl'] = GetTargetUrl($Conn, $SubjectId);
@@ -70,7 +71,8 @@ switch($FunctionCall) {
 			//be in state 5?Even if they got on there some other way they
 			//they should finish now?
 			$State = 6;
-			$Sql02 = "UPDATE Register SET State = $State WHERE SubjectId ='$SubjectId'";
+			$Sql02 = "UPDATE Register SET State = $State, DateTime_TIprobe = '$DateTime_Write'
+			 WHERE SubjectId ='$SubjectId'";
 			if(($Conn->query($Sql02)===true)) {
 				// send them the End page 
 				$Result['TargetUrl'] = GetTargetUrl($Conn, $SubjectId);

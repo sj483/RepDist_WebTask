@@ -1,13 +1,9 @@
 <?php
 header('Content-Type: application/json');
 
-// A function that makes stimuli assignments
-//REMEBER THAT THIS GETS CALLED BY THE FUNCTION GETASSIGNMENTS
-//IN THE FUNCTION SPEC.JS SCRIPT WHICH IS IN TI TRAIN AND TI PROBE!!!
 function MakeAssignment($SubjectId) {
-	//FINISH THIS
 	$Groups  = ['Ani','Art','Fac','Foo','Lin','Obj','Pla','Spa','Tex'];
-	$RndN = random_int(0, 8); 
+	$RndN = rand(0, 8); 
 	$GroupId = $Groups[$RndN];
     $ImgNums = range(0,5);
 	$ImgIds = array();

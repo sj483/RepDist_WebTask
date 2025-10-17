@@ -26,7 +26,8 @@ if (!$Result) {
     die("Query failed: " . mysqli_error($Conn));
 }
 
-$State = mysqli_fetch_assoc($Result)['State'];
+$Row = mysqli_fetch_assoc($Result);
+$State = $Row['State'];
 if (!($State == 2 or $State == 4)){
     RedirectToUrl('Error.html'); ///RETURN HERE TO DECIDE IF WE WANT THIS BEHAVIOUR
 }
