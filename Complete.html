@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Thank you</title>
+<meta charset="UTF-8">
+
+<!-- Set the favicon logo -->
+<link rel="icon" href="./Logo.png" type="image/x-icon" />
+
+<!-- Import the stylesheet -->
+<link rel="stylesheet" href="./Assets/w3.css">
+
+<!-- Some more styling -->
+<style>
+body {padding: 30px 0;}
+</style>
+
+<!-- Get jQuery -->
+<script src="./Assets/jquery.min.js"></script>
+
+<!-- Get participant IDs passed in from URL -->
+<script src="./GetPpantIds.js"></script>
+
+<!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO) -->
+<script src="./Assets/SetDateTime.js"></script>
+
+<script>
+
+// GetCompletionLink function
+async function  GetCompletionLink() {
+    data = {FunctionCall: 'GetCompletionLink', SubjectId: SubjectId};
+    var P1 = await fetch('./CompleteActions.php', {
+        method: 'post',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+		body: JSON.stringify(data)}
+    );
+    var Result = await P1.json();
+    return Result;
+    }
+    
+
+
+
+// OnBodyLoad
+var Editable = true;
+function OnBodyLoad() {
+    
+    //update register 
+ 
+    // Run GetCompletionLink()
+    GetCompletionLink().then(function(P2) {
+        if (!P2.FoundSubject) {
+            alert('Sorry, we could not find any record of your participation.\nPlease contact Sam Berens at S.Berens@sussex.ac.uk.');
+        } else {
+            if (!P2.Completed) {
+                alert('Sorry, it appears that you have not completed all parts of the experiment yet. I am not sure how you ended up on this page.');
+            } else {
+                document.getElementById('CompletionLink').outerHTML = P2.CompletionLink;
+            }
+        }
+    });
+}
+
+
+</script>
+</head>
+
+<body class = "w3-center" onload="OnBodyLoad()">
+<h1>Thank you! &#128591;</h1>
+<p>The experiment is now complete. Thank you for taking part.</p>
+<br /><br />
+<p>When ready, please click on the link below to make your submission, for either Prolific or SONA:<br />
+<a id="CompletionLink" href="./Error.html" target="_blank">###</a></p>
+</body>
+</html>

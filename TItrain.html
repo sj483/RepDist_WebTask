@@ -23,7 +23,6 @@
 
 <!-- Styling -->
 <script>
-
 var ScreenHeight = window.screen.height;
 var heightFactor = 13/27; // Proportion of screen height to use for imgs
 var BorderWidth = 2;
@@ -67,7 +66,7 @@ TaskIO.Trials = [];
 // Function to get the timeline variables
 async function GetTimelineVars() {
     var Timeline = [];
-    for (iRep = 0; iRep < 25; iRep++) { // We normally run 25 reps
+    for (iRep = 0; iRep < 1; iRep++) { // We normally run 25 reps CHANGE BACK TO 25 WHEN FINISHED TESTING!!
         var Order = [0,1,2,3,4];
         Shuffle(Order);
         for (iOrder = 0; iOrder < 5; iOrder++) {
@@ -99,7 +98,7 @@ async function WriteTaskIO() {
 	});
 
     // Return the result
-    var Result = await P1.json(); //RETURN TOMORROW THE PROBMEL IS HERE!!(MAYBE SOMETHING TO DO WITH HOW WRITExio IS MALFORMED FOR THE LOGNUNFOCUS CASE, ITS ALSO UPDATING STATE WHEN IT SHOULDNT IN THIS CASE)
+    var Result = await P1.json(); 
     return Result;
 }
 

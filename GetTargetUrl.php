@@ -50,7 +50,7 @@ function GetTargetUrl($Dbc, $SId) {
 	} else if ($State == 6) {
 		//this means they have finished TIprobe and are ready to go to the end
 		//and sent back to SONA for credit/ prolific
-		return "./End.html?SubjectId=$SId#"	;
+		return "./Complete.html?SubjectId=$SId#"	;
 		
 	} else if ($State < 0) {
 		// Kicked off
