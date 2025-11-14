@@ -20,7 +20,7 @@ if($Conn->connect_error) {
 }
 
 // Set Now
-$Now = new DateTimeImmutable("now", new DateTimeZone('Europe/London'));
+$Now = new DateTimeImmutable("now", new DateTimeZone(timezone: 'Europe/London'));
 
 switch($Input['FunctionCall']) {
 	case 'Register':

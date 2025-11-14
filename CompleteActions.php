@@ -63,7 +63,7 @@ if(!isset($Result['Error'])) {
 
 					if (strlen($PoolId)>5){
     		        //RETURN HERE TO SWAP OUT PROLIFIC CODE FOR NEW ONE(FORM TO EXPECT IS E.G CCK0I5MM)
-    		        $Result['CompletionLink'] = '<a id="CompletionLink" href="https://app.prolific.co/submissions/complete?cc=XXXXXXXX" target="_blank">https://app.prolific.co/submissions/complete?cc=XXXXXXXX</a>';
+    		        $Result['CompletionLink'] = '<a id="CompletionLink" href="'.$PrlfcCmplLnk.'" target="_blank">'.$PrlfcCmplLnk.'</a>';
 					} elseif(strlen($PoolId)==5 ) {
 						//return double check that sona surveycodes are 5 characters long
 						$Result['CompletionLink'] = '<a id="CompletionLink" href="https://sussexpsychology.sona-systems.com/webstudy_credit.aspx?".
