@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require __DIR__ . '/Credentials.php';
+require __DIR__ . '/ProlificCompletion.php';
 
 // Preallocate the result:
 $Result = array();
@@ -49,7 +50,6 @@ if(!isset($Result['Error'])) {
     				$FoundSubject = true;
     				$State = $Row["State"];
 					$PoolId = $Row["PoolId"];
-					// Other fields can be extracted here as needed
     			}
     		}
     		$Result['FoundSubject'] = $FoundSubject;
@@ -59,18 +59,19 @@ if(!isset($Result['Error'])) {
     		    if ($State == 6) {
 					$Result['Completed'] = true;
 					
-
-
 					if (strlen($PoolId)>5){
     		        //RETURN HERE TO SWAP OUT PROLIFIC CODE FOR NEW ONE(FORM TO EXPECT IS E.G CCK0I5MM)
-    		        $Result['CompletionLink'] = '<a id="CompletionLink" href="'.$PrlfcCmplLnk.'" target="_blank">'.$PrlfcCmplLnk.'</a>';
-					} elseif(strlen($PoolId)==5 ) {
-						//return double check that sona surveycodes are 5 characters long
-						$Result['CompletionLink'] = '<a id="CompletionLink" href="https://sussexpsychology.sona-systems.com/webstudy_credit.aspx?".
-    					"experiment_id=2001&credit_token=1aad237a918a43ee89c82d814bf28823&survey_code='.$PoolId.'" target="_blank">https://sussexpsychology.sona-systems.com/webstudy_credit.aspx?".
-    					"experiment_id=2001&credit_token=1aad237a918a43ee89c82d814bf28823&survey_code='.$PoolId.'</a>';
-    		    } else {
-					$Result['CompletionLink'] = '<a id="CompletionLink" href="./PoolError.html?SubjectId='.$SubjectId.'#" target="_blank">./PoolError.html?SubjectId='.$SubjectId.'#</a>';
+					$Result['CompletionLink'] = '<a id="CompletionLink" href="' . $PrlfcCmplLnk . '" target="_blank">' . $PrlfcCmplLnk . '</a>';
+
+					} elseif (strlen($PoolId) == 5) {
+					// return double check that Sona survey codes are 5 characters long
+						$baseUrl = 'https://sussexpsychology.sona-systems.com/webstudy_credit.aspx';
+						$query = '?experiment_id=2001&credit_token=1aad237a918a43ee89c82d814bf28823&survey_code=' . $PoolId;
+						$fullUrl = $baseUrl . $query;
+						$Result['CompletionLink'] = '<a id="CompletionLink" href="' . $fullUrl . '" target="_blank">' . $fullUrl . '</a>';
+					} else {
+						$Result['CompletionLink'] = '<a id="CompletionLink" href="./Error.html?Error=NoPoolId&SubjectId=' . $SubjectId . '">Error</a>';
+					}
 				}
     		}
     		
@@ -78,11 +79,11 @@ if(!isset($Result['Error'])) {
     		$Sql2 = "UPDATE Register SET DateTime_Complete = '$DateTime_Write' WHERE SubjectId ='$SubjectId'";
     		if ($Conn->query($Sql2)===false) {
     		    $Conn->close();
-			    die('Query Sql2 failed to execute successfully;');
+			    die("Query Sql2 failed to execute successfully");
     		}
             break;
-			}		
-	default:
+					
+		default:
             $Result['Error'] = 'Bad function call!';
             break;
 }

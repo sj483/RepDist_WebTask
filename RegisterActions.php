@@ -65,6 +65,7 @@ switch($Input['FunctionCall']) {
 			$Result['TargetUrl'] = $Url;
 		} else {
 			$Conn->close();
+			$Result['Error'] = $Sql1;
 			die('Query $Sql failed to execute successfully;');
 		}
 		break;
@@ -72,7 +73,6 @@ switch($Input['FunctionCall']) {
 	default:
 		$Conn->close();
 		die('Bad function call.');
-		break;
 }
 $Conn->close();
 echo json_encode($Result);

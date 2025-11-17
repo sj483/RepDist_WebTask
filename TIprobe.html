@@ -22,17 +22,21 @@
 <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/css/jspsych.css" />
 
 <!-- Styling -->
- <script>
+<style>
+    :root {
+    --ImgWidth1: 516; /* default value */
+    }
+    img:hover{border: 2px solid #00ffff;width: var(--ImgWidth1);}
+    body{background-color:#808080;}
+</style>
+<script>
 var ScreenHeight = window.screen.height;
 var heightFactor = 13/27; // Proportion of screen height to use for imgs
 var BorderWidth = 2;
 var ImgWidth0 = ScreenHeight * heightFactor;
 var ImgWidth1 = ImgWidth0 - (2*BorderWidth);
+document.documentElement.style.setProperty('--ImgWidth1', ImgWidth1 + 'px');
 </script>
-<style>
-img:hover{border: 2px solid #00ffff;width: 516px;}
-body{background-color:#808080;}
-</style>
     
 <script>
 // --- TaskIO SETUP ---

@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="./Assets/w3.css">
 
 <!-- Load the favicon -->
-<link rel="icon" href="./Logo.png" type="image/x-icon" />
+<link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
 
 <!-- More styling -->
 <style>
@@ -28,9 +28,8 @@ body {
 </style>
 
 <!-- reCAPTCHA v3 -->
-<script src="https://www.google.com/recaptcha/api.js?render=6Leg05YnAAAAABEQ2jrjEtbpROANGdTC5hJkzMtH"></script>
-<!--<script src="reCaptcha.js"></script> -->
-
+<script src="https://www.google.com/recaptcha/api.js?render=6Lce3-0rAAAAAEXTQHBc-CcfNZaZFsVAnm-YKls5"></script>
+<!--<script>grecaptcha.ready();</script> -->
 <script>
 // Function to change handedness value
 var Handedness = 'Right';
@@ -41,25 +40,39 @@ function ChangeHandedness(Value) {
 // Function to submit form
 var Gender;
 var L1;
-function SubmitForm() {
+async function SubmitForm() {
 	Gender = document.getElementById('Input_Gender').value;
 	L1 = document.getElementById('Input_L1').value;
     BMY = document.getElementById('Input_BMY').value;
 	
+
 	var Args = {
 	    SubjectId: SubjectId,
 		Gender: Gender,
 		L1: L1,
 		Handedness: Handedness,
         BMY: BMY};
-		
-	Register(Args)
-		.then(function(Result) {
-			// Send onwards after the Register action:
-			window.location.replace(Result.TargetUrl);
-		});
-	
-}
+
+    // Register FIRST
+    var Result1 = await Register(Args); 
+     // THEN verify with reCaptcha after waiting for it to be ready
+    
+    var Result2 = await ValidateReCaptcha();
+    
+     if (Result2) {
+         window.location.replace(Result1.TargetUrl);
+         //REMOVE THE FOLLOWING LINE AFTER TESTING AND MIGRATION TO PROPER C01 DOMAIN...
+     } else {
+        alert('Registration: ' + Result1.Error +Result1.TargetUrl );
+        window.location.replace(Result1.TargetUrl);
+   }
+   //...AND REINSTATE THESE :
+   //else {
+     //   const params = new URLSearchParams(window.location.search);
+       // var SubjectId = params.get("SubjectId");
+       // window.location.replace('./Error.html?Error=RecaptchaFailed&SubjectId='+ SubjectId);
+    //}
+};
 
 
 async function Register(Args){
@@ -72,6 +85,45 @@ async function Register(Args){
     });
     data = await P1.json();
     return data;
+}
+
+function ValidateReCaptcha() {
+    return new Promise((resolve) => {
+        grecaptcha.execute('6Lce3-0rAAAAAEXTQHBc-CcfNZaZFsVAnm-YKls5', {action: 'homepage'})
+        .then(function(token) {
+            // Send token to your server
+            fetch('./VerifyHuman.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ recaptchaToken: token })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.score >= 0.5) {
+                    console.log('User verified as human!');
+                    // Proceed with actions on register submission 
+                    resolve(true);
+
+                } else {
+                    console.error('reCAPTCHA verification failed', data['error-codes']);
+                    alert('reCAPTCHA verification failed, please contact the researcher if you are indeed human (sj483@sussex.ac.uk)'); 
+                   resolve(false);
+                }
+            })
+            .catch(err => {
+                console.error('Error receiving reCAPTCHA status', err);
+                resolve(false);
+              })
+        })
+        .catch(function(err) {
+            console.error('Error executing reCAPTCHA', err);
+            resolve(false);
+        });
+        
+    
+    });
 }
 
 
@@ -205,4 +257,4 @@ async function Register(Args){
 </p>
 
 </body>
-</html>
+</html>verifying
