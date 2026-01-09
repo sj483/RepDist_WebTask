@@ -59,10 +59,13 @@ if(!isset($Result['Error'])) {
     		    if ($State == 6) {
 					$Result['Completed'] = true;
 					
-					if (strlen($PoolId)>5){
+					if (substr($PoolId, 0, 4) ==='IRL:' ){
+						$Result['CompletionLink'] = '<a id="CompletionLink" href="#" target="_blank">You have chosen to receive cash payment via the researcher. No further action is required.</a>';
+					}
+					elseif (strlen($PoolId)>7){
     		        //RETURN HERE TO SWAP OUT PROLIFIC CODE FOR NEW ONE(FORM TO EXPECT IS E.G CCK0I5MM)
-					$Result['CompletionLink'] = '<a id="CompletionLink" href="' . $PrlfcCmplLnk . '" target="_blank">' . $PrlfcCmplLnk . '</a>';
-
+						$Result['CompletionLink'] = '<a id="CompletionLink" href="' . $PrlfcCmplLnk . '" target="_blank">' . $PrlfcCmplLnk . '</a>';
+					
 					} elseif (strlen($PoolId) == 5) {
 					// return double check that Sona survey codes are 5 characters long
 						$baseUrl = 'https://sussexpsychology.sona-systems.com/webstudy_credit.aspx';

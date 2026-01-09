@@ -15,7 +15,11 @@ TItrain = TItrain +
     '<p>After you have made a choice, a green <font color="green"><b>&#10003;</b></font> will be shown to mark a correct answer, while a red &#10060; will be shown to mark an incorrect answer. ' + 
     'If you are not sure about which images to select, you should still try to make a decision within 4 seconds, even at random. ' + 
     'This is because you will not get any feedback unless you make a choice, and so guessing, even when you are unsure, will help you to learn the rules faster.</p>';
-    
+
+TItrain = TItrain +    
+'<p>Please do not minimise this window or open other tabs while completing the tasks.' +
+' If you do, your participation will be discontinued and you will not receive credit.</p>';
+
 TItrain = TItrain +
     '<p>Please try your best.</p>';
     
@@ -31,6 +35,10 @@ TIprobe = TIprobe +
 TIprobe = TIprobe +
     '<p>Even if you are not sure which image to select, please try to make a guess within 4 seconds. ' +
     'When guessing, people tend to perform much better than they expect.</p>';
+
+TIprobe = TIprobe + 
+   '<p> Again, please remember that if you minimise this window or open other tabs while completing the tasks, ' +
+   'your participation will be discontinued, and you will not receive credit.</p>';
     
 TIprobe = TIprobe +
     '<p>Please try your best.</p>';

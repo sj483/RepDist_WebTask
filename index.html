@@ -72,8 +72,8 @@ async function LogLanding() {
         },
         body: JSON.stringify({
             FunctionCall: 'LogLanding',
-            Args: PpantIds, 
-        }),
+            Args: PpantIds
+        })
     });
     result = await P1.json(); //this result has an 'Error' field and a 'TargetUrl' field  
     } else {
@@ -89,7 +89,7 @@ function OnBodyLoad() {
     }
     
     // Add an event listener:
-    InputBox = document.getElementById("Input_PID");
+    InputBox = document.getElementById("Input_SID");
     InputBox.addEventListener("keydown", function(Event) {
         // Number 13 is the "Enter" key on the keyboard
         if (Event.keyCode === 13) {
@@ -102,16 +102,12 @@ function OnBodyLoad() {
 }
 
 async function SubmitForm() {
-    var A = document.getElementById('Input_PID').value;
-    var B = document.getElementById('Input_SID').value;
-    if (A.length > 20) {
-        PoolId = A;
-    } else if (B.length > 4) {
-        PoolId = B;
+    var A = document.getElementById('Input_SID').value;
+    if (A.length < 20 && A.length > 4 && /^[A-Za-z]+[0-9]+$/.test(A)) {
+        PoolId = 'IRL:' + A ;
     }
     if (!Boolean(PoolId)) {
-        alert("Please enter a valid Prolific ID or Sussex username.") //Come back to this: THIS IS WRONG NOW BECAUSE SONA GIVES THEM ANOTHER
-        // CODE NOT THE USERNAME BUT THEY PROBABLY WONT SEE IT APART FROM IN THEIR URL
+        alert("Please enter a valid Sussex username.")
     } else {
   
             await GenSubjectId(PoolId)
@@ -132,13 +128,12 @@ async function SubmitForm() {
 // --- Execute functions ---
 var GetUserInput = false;
 if ((!PoolId) && (!SubjectId)) {
-    alert('error 2')
+    alert('If you have arrived at this page via Prolific or SONA, something has gone wrong! Please contact the researcher: sj483@sussex.ac.uk');
     // Get user input
     GetUserInput = true;
     
 } else {
     // Call GenSubjectId, no user input required, and then redirect:
-    
     if (!PoolId && Boolean(SubjectId)) {
         LogLanding().then(function(P1) {
             if (Boolean(P1.TargetUrl)) {
@@ -174,7 +169,7 @@ if ((!PoolId) && (!SubjectId)) {
 <div class="w3-container" style="width:700px;visibility:hidden" id = "IdForm">
 <h1>Sign in</h1>
 <div>
-Please sign in with either your Prolific ID,<br />or your Sussex username.
+Please sign in with your Sussex username.
 <br />
 <br />
 </div>
@@ -182,10 +177,6 @@ Please sign in with either your Prolific ID,<br />or your Sussex username.
 <table class="w3-table">
 
 <tbody>
-	<tr>
-        <th width="100px" style="text-align:left">Prolific ID:</th>
-        <td width="280px"><input id="Input_PID" type="text" name="PID" placeholder="Prolific ID" size="26"></td>
-	</tr>
 	<tr>
         <th width="100px" style="text-align:left">Sussex username:</th>
         <td width="280px"><input id="Input_SID" type="text" name="SID" placeholder="Sussex username" size="26"></td>
