@@ -6,12 +6,12 @@ $Input = json_decode(file_get_contents('php://input'), true);
 //intialise the output
 $Result = array();
 //check for required arguments
-if (!isset($Input['PID'])) {
+if (!isset($Input['PoolId'])) {
     $Result['Error'] = 'No function arguments!';
 }
 if(!isset($Result['Error'])) {
     // Decode raw JSON from request body
-    $PID = $Input['PID'];
+    $PID = $Input['PoolId'];
     $RawHash = md5($PID);
     $Result['SubjectId'] = substr($RawHash, -8);
     }

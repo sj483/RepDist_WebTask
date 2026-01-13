@@ -41,7 +41,7 @@ async function GenSubjectId(PID) {
         headers: {
             'Content-Type': 'application/json', 
         },
-        body: JSON.stringify({PID: PID}),
+        body: JSON.stringify({PoolId: PID}),
     });
     result = await P1.json();
     return result;
@@ -103,11 +103,15 @@ function OnBodyLoad() {
 
 async function SubmitForm() {
     var A = document.getElementById('Input_SID').value;
-    if (A.length < 20 && A.length > 4 && /^[A-Za-z]+[0-9]+$/.test(A)) {
-        PoolId = 'IRL:' + A ;
-    }
-    if (!Boolean(PoolId)) {
-        alert("Please enter a valid Sussex username.")
+    if (A.length > 20 || (A.length ===5 & /^[0-9]+$/.test(A))){
+        PoolId = A; //I need to  do gen subjectID?
+    } else if (A.length === 8 ) {
+        SubjectId = A;
+        PoolId = ''; 
+    }//can't set it to null because its already set to null if not passed in from URL
+    if (PoolId === null) {
+        //this should only get triggered if they press submit but A doesn't meet either condition above
+        alert("Please enter a valid subjectId.") 
     } else {
   
             await GenSubjectId(PoolId)
@@ -128,7 +132,6 @@ async function SubmitForm() {
 // --- Execute functions ---
 var GetUserInput = false;
 if ((!PoolId) && (!SubjectId)) {
-    alert('If you have arrived at this page via Prolific or SONA, something has gone wrong! Please contact the researcher: sj483@sussex.ac.uk');
     // Get user input
     GetUserInput = true;
     
@@ -169,7 +172,8 @@ if ((!PoolId) && (!SubjectId)) {
 <div class="w3-container" style="width:700px;visibility:hidden" id = "IdForm">
 <h1>Sign in</h1>
 <div>
-Please sign in with your Sussex username.
+Please enter your Subject Id in the box below to continue.
+If you have arrived at this page via Prolific or SONA, this will be your Prolific ID or Sona code.
 <br />
 <br />
 </div>
@@ -178,8 +182,8 @@ Please sign in with your Sussex username.
 
 <tbody>
 	<tr>
-        <th width="100px" style="text-align:left">Sussex username:</th>
-        <td width="280px"><input id="Input_SID" type="text" name="SID" placeholder="Sussex username" size="26"></td>
+        <th width="100px" style="text-align:left">SubjectId:</th>
+        <td width="280px"><input id="Input_SID" type="text" name="SID" placeholder="SubjectID" size="26"></td>
 	</tr>
 	<tr>
 	    <th width="100px" style="text-align:left"></th>
