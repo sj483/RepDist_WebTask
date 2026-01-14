@@ -33,8 +33,6 @@ function IsEmpty(Obj) {
 	return true;
 }
 
-
-//NEW...
 async function GenSubjectId(PID) {
     var P1 = await fetch('./GenSubjectId.php', {
         method: 'POST',
@@ -46,14 +44,12 @@ async function GenSubjectId(PID) {
     result = await P1.json();
     return result;
     }
-//
 
 
-//NEW...
 async function LogLanding() {
     var PpantIds = {};
     if (!PoolId && Boolean(SubjectId)) {
-        // They have definitely been here before!
+        // They have definitely been here before or they are an in-person subject
         PpantIds.PoolId = null;
         PpantIds.SubjectId = SubjectId;
     } else if (Boolean(PoolId) && Boolean(SubjectId)) {
@@ -104,7 +100,7 @@ function OnBodyLoad() {
 async function SubmitForm() {
     var A = document.getElementById('Input_SID').value;
     if (A.length > 20 || (A.length ===5 && /^[0-9]+$/.test(A))){
-        PoolId = A; //I need to  do gen subjectID?
+        PoolId = A; 
         await GenSubjectId(PoolId)
             .then(function(P1) {
             SubjectId = P1.SubjectId;})
@@ -117,10 +113,11 @@ async function SubmitForm() {
                     window.location.replace("./Error.html?PoolId="+PoolId+"&SubjectId="+SubjectId+"#");
                 }
             })
+        return;    
         
     } else if (A.length === 8 ) {
         SubjectId = A;
-        PoolId = null; 
+        PoolId = null;
         await LogLanding()
             .then(function(P2){
                 if (Boolean(P2.TargetUrl)) {
@@ -130,6 +127,7 @@ async function SubmitForm() {
                     window.location.replace("./Error.html?PoolId="+PoolId+"&SubjectId="+SubjectId+"#");
                 }
             });  
+        return;    
     }
     if (PoolId === null) {
         //this should only get triggered if they press submit but A doesn't meet either condition above

@@ -35,7 +35,8 @@ if (!isset($Result['Error'])) {
             $Input = $Input['Args'];
             $PoolId = $Input['PoolId'];
             $SubjectId = $Input['SubjectId'];
-            $PoolId = mysqli_real_escape_string($Conn,$PoolId);
+            //special handling of null in case of irl subjects 
+            $PoolId = $PoolId === null ? "NULL": "'" . mysqli_real_escape_string($Conn, $PoolId) . "'";
             $SubjectId = mysqli_real_escape_string($Conn,$SubjectId);
             $Now = new DateTimeImmutable("now", new DateTimeZone('Europe/London'));
             $DateTime_Landing = $Now->format('Y-m-d\TH:i:s');
@@ -60,8 +61,9 @@ if (!isset($Result['Error'])) {
             if ($Virgin) {
                   
                 // Cons
+                
                 $Sql01 = "INSERT INTO Register (PoolId, SubjectId, State, DateTime_Landing) 
-				    VALUES ('$PoolId', '$SubjectId', 0,'$DateTime_Landing')";
+				    VALUES ($PoolId, '$SubjectId', 0,'$DateTime_Landing')";
 				if($Conn->query($Sql01) === true) {
                     // Get the TargetUrl and return it (will take them to consent page) 
                     $Url= GetTargetUrl($Conn, $SubjectId);
