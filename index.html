@@ -103,18 +103,9 @@ function OnBodyLoad() {
 
 async function SubmitForm() {
     var A = document.getElementById('Input_SID').value;
-    if (A.length > 20 || (A.length ===5 & /^[0-9]+$/.test(A))){
+    if (A.length > 20 || (A.length ===5 && /^[0-9]+$/.test(A))){
         PoolId = A; //I need to  do gen subjectID?
-    } else if (A.length === 8 ) {
-        SubjectId = A;
-        PoolId = ''; 
-    }//can't set it to null because its already set to null if not passed in from URL
-    if (PoolId === null) {
-        //this should only get triggered if they press submit but A doesn't meet either condition above
-        alert("Please enter a valid subjectId.") 
-    } else {
-  
-            await GenSubjectId(PoolId)
+        await GenSubjectId(PoolId)
             .then(function(P1) {
             SubjectId = P1.SubjectId;})
             .then(function(  ) {P2 = LogLanding(); return P2;})
@@ -122,10 +113,30 @@ async function SubmitForm() {
                 if (Boolean(P2.TargetUrl)) {
                     window.location.replace(P2.TargetUrl);
                 } else {
-                    alert('error 5 ')
+                    alert('Something has gone wrong logging your subjectId, please contact the researcher (sj483@sussex.ac.uk).')
                     window.location.replace("./Error.html?PoolId="+PoolId+"&SubjectId="+SubjectId+"#");
                 }
-            });
+            })
+        
+    } else if (A.length === 8 ) {
+        SubjectId = A;
+        PoolId = null; 
+        await LogLanding()
+            .then(function(P2){
+                if (Boolean(P2.TargetUrl)) {
+                    window.location.replace(P2.TargetUrl);
+                } else {
+                    alert('Something has gone wrong logging your subjectId, please contact the researcher (sj483@sussex.ac.uk).')
+                    window.location.replace("./Error.html?PoolId="+PoolId+"&SubjectId="+SubjectId+"#");
+                }
+            });  
+    }
+    if (PoolId === null) {
+        //this should only get triggered if they press submit but A doesn't meet either condition above
+        alert("Please enter a valid subjectId.") 
+    } else {
+  
+            
     }
 }
 
