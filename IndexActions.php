@@ -53,7 +53,7 @@ if (!isset($Result['Error'])) {
                     $Virgin = false;
                     $PoolId = $Row["PoolId"]; // Redefine as it may be null;
                     $State = $Row["State"];
-                    $TaskPerm = $Row["TaskPerm"];
+                    $Assignment = $Row["Assignment"];//need to figure out if this and poolid ever get used as currently not returned
                 }
             }
             
