@@ -1,8 +1,10 @@
 <?php
 header('Content-Type: application/json');
 
+
 //unpack the input
 $Input = json_decode(file_get_contents('php://input'), true);
+
 //intialise the output
 $Result = array();
 //check for required arguments

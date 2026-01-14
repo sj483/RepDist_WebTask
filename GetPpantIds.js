@@ -1,5 +1,5 @@
 function GetPoolIds() {
-    // Self-contained code to grab ProlificId and/or SubjectId:
+    // Self-contained code to grab ProlificId, SONAId and/or SubjectId:
 	var CurrentUrl = window.location.href;
 	var QueryStart = CurrentUrl.indexOf("?") + 1;
 	var QueryEnd = CurrentUrl.indexOf("#") + 1 || CurrentUrl.length + 1;
@@ -28,7 +28,10 @@ function GetPoolIds() {
 	    if (UrlParams.hasOwnProperty('PROLIFIC_PID')) {
 	        PoolId = UrlParams.PROLIFIC_PID[0];
 	    }
-	    if (UrlParams.hasOwnProperty('PoolId')) {
+	    if (UrlParams.hasOwnProperty('SONA_PID')) {
+	        PoolId = UrlParams.SONA_PID[0];
+	    }
+		if (UrlParams.hasOwnProperty('PoolId')) {
 	        PoolId = UrlParams.PoolId[0];
 	    }
 	    if (UrlParams.hasOwnProperty('SubjectId')) {
@@ -38,6 +41,7 @@ function GetPoolIds() {
 	    // Keep PoolId and SubjectId at null
 	}
 	
+
 	// If TaskIO has been set above, add vars in here!
 	if (typeof(TaskIO)=="object") {
 	    TaskIO.SubjectId = SubjectId;
