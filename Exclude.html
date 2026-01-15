@@ -55,12 +55,12 @@ function OnBodyLoad() {
     
     // If they are using IE, prep the message to display:
     try {
-        if (UserAgentResult.browser.name.includes('IE')){
-    	    document.getElementById('Message').innerHTML = "<p>You are not able to run the experiment using Internet Explorer.<br /><br />Please download a newer web browser. We recommend <a href='https://www.google.com/chrome/'>Google Chrome</a>.</p>";
+        if (UserAgentResult.browser.name.includes('IE') || UserAgentResult.browser.name.includes('Edge')){
+    	    document.getElementById('Message').innerHTML = "<p>You are not able to run the experiment using Internet Explorer or Edge.<br /><br />Please download a newer web browser. We recommend <a href='https://www.google.com/chrome/'>Google Chrome</a>.</p>";
         }
     } catch(Err) {
         if (UserAgentResult.browser.name == 'IE'){
-	        document.getElementById('Message').innerHTML = "<p>You are not able to run the experiment using Internet Explorer.<br /><br />Please download a newer web browser. We recommend <a href='https://www.google.com/chrome/'>Google Chrome</a>.</p>";
+	        document.getElementById('Message').innerHTML = "<p>You are not able to run the experiment using Internet Explorer or Edge.<br /><br />Please download a newer web browser. We recommend <a href='https://www.google.com/chrome/'>Google Chrome</a>.</p>";
         }
     }
     
