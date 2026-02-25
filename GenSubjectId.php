@@ -1,21 +1,18 @@
 <?php
 header('Content-Type: application/json');
 
-
-//unpack the input
+// Unpack the input
 $Input = json_decode(file_get_contents('php://input'), true);
 
-//intialise the output
-$Result = array();
-//check for required arguments
+// Check for required arguments
 if (!isset($Input['PoolId'])) {
-    $Result['Error'] = 'No function arguments!';
+    die('GenSubjectId called without a PoolId.');
 }
-if(!isset($Result['Error'])) {
-    // Decode raw JSON from request body
-    $PID = $Input['PoolId'];
-    $RawHash = md5($PID);
-    $Result['SubjectId'] = substr($RawHash, -8);
-    }
+
+// Set the the output
+$Result = array();
+$PoolId = $Input['PoolId'];
+$Hash = md5($PoolId);
+$Result['SubjectId'] = substr($Hash, -8);
 echo json_encode($Result);
 ?>

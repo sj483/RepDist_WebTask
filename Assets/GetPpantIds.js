@@ -1,6 +1,12 @@
-function GetPoolIds() {
-    // Self-contained code to grab ProlificId, SONAId and/or SubjectId:
+function GetPpantIds() {
+    // Grab participant IDs (PoolId and/or SubjectId) from URL
 	var CurrentUrl = window.location.href;
+
+	// If there is no query string, do nothing
+	if (CurrentUrl.indexOf("?") === -1) {
+		return; // PoolId and SubjectId stay null
+	}
+
 	var QueryStart = CurrentUrl.indexOf("?") + 1;
 	var QueryEnd = CurrentUrl.indexOf("#") + 1 || CurrentUrl.length + 1;
 	var Query = CurrentUrl.slice(QueryStart, QueryEnd - 1);
@@ -50,4 +56,4 @@ function GetPoolIds() {
 
 var PoolId = null;
 var SubjectId = null;
-GetPoolIds();
+GetPpantIds();

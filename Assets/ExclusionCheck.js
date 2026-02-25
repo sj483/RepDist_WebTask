@@ -915,10 +915,13 @@ function CheckExclusion() {
 	var UserAgentResult = UserAgentParser.getResult();
 	var BrowserName = UserAgentResult.browser.name;
 	
-	// Conditions for exclusion:
-	// IE...
+    // Conditions for exclusion:
+	// IE and Edge...
 	try {
 	    if (BrowserName.includes('IE')){
+		    Exclude = true;
+	    }
+	    if (BrowserName.includes('Edge')){
 		    Exclude = true;
 	    }
 	} catch(Err) {
@@ -926,6 +929,16 @@ function CheckExclusion() {
 		    Exclude = true;
 	    }
 	}
+
+    // Exclude based on screen resolution
+    var ScreenWidth = window.screen.width;
+    var ScreenHeight = window.screen.height;
+    if (ScreenWidth < 1280) {
+        Exclude = true;
+    }
+    if (ScreenHeight < 720) {
+        Exclude = true;
+    }
 	
 	// Redirect:
 	if (Exclude) {

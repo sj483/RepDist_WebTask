@@ -125,9 +125,15 @@ function ValidateReCaptcha() {
     
     });
 }
-
-
 </script>
+<script>
+// script to make sure birth month/year input doesnt accept empty input on submition  
+    window.addEventListener('load', () => {
+      const bmy = document.getElementById('Input_BMY');
+      bmy.focus();
+      bmy.blur();
+    });
+  </script>
 </head>
 
 <body>
@@ -238,7 +244,7 @@ function ValidateReCaptcha() {
     <tr>
         <th>What month and year <br>were you born in?<font style='color:red;'>*</font></th>
         <td>
-            <input type="month" name="BMY" id="Input_BMY"> 
+            <input type="month" name="BMY" id="Input_BMY" required pattern="\d{4}-\d{2}">
         </td>
     </tr>
     

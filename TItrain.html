@@ -4,7 +4,7 @@
 <title>TI Training</title>
 
 <!-- Set the favicon logo -->
-<link rel="icon" href="./Logo.png" type="image/x-icon" />
+<link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
 
 <!-- Unpack the main JSpsych module -->
 <script src="https://unpkg.com/jspsych@7.3.3"></script>
@@ -72,7 +72,7 @@ TaskIO.Trials = [];
 // Function to get the timeline variables
 async function GetTimelineVars() {
     var Timeline = [];
-    for (iRep = 0; iRep < 1; iRep++) { // We normally run 25 reps CHANGE BACK TO 25 WHEN FINISHED TESTING!!
+    for (iRep = 0; iRep < 2; iRep++) { // We normally run 25 reps CHANGE BACK TO 25 WHEN FINISHED TESTING!!
         var Order = [0,1,2,3,4];
         Shuffle(Order);
         for (iOrder = 0; iOrder < 5; iOrder++) {

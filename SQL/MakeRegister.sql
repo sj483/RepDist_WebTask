@@ -1,0 +1,17 @@
+CREATE TABLE `c01_DataStore`.`Register` (
+    `PoolId` TEXT NULL DEFAULT NULL,
+    `SubjectId` TEXT NOT NULL,
+    `BMY` CHAR(7) NULL DEFAULT NULL,
+    `Gender` TEXT NULL DEFAULT NULL,
+    `Handedness` TEXT NULL DEFAULT NULL,
+    `L1` TEXT NULL DEFAULT NULL,
+    `State` INT NULL DEFAULT NULL,
+    `Assignment` TEXT NULL DEFAULT NULL,
+    `DateTime_Landing` DATETIME NULL DEFAULT NULL,
+    `DateTime_Consent` DATETIME NULL DEFAULT NULL,
+    `DateTime_Register` DATETIME NULL DEFAULT NULL,
+    `DateTime_TIinstr` DATETIME NULL DEFAULT NULL,
+    `DateTime_TItrain` DATETIME NULL DEFAULT NULL,
+    `DateTime_Complete` DATETIME NULL DEFAULT NULL,
+    PRIMARY KEY (`SubjectId`(8))
+) ENGINE = InnoDB;
