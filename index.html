@@ -22,65 +22,94 @@
     <script src="./Assets/ExclusionCheck.js"></script>
 
     <script>
-        function IsEmpty(Obj) {
-            for (var Key in Obj) {
-                if (Obj.hasOwnProperty(Key))
-                    return false;
+        function BuildErrorUrl() {
+            return (
+                "./Error.html?PoolId=" +
+                encodeURIComponent(String(PoolId)) +
+                "&SubjectId=" +
+                encodeURIComponent(String(SubjectId)) +
+                "#"
+            );
+        }
+
+        function HandleError(ErrorCode) {
+            alert(
+                "An error has occurred.\n" +
+                "Please report error code " + ErrorCode +
+                " to Sophie (sj483@sussex.ac.uk)."
+            );
+            window.location.replace(BuildErrorUrl());
+        }
+
+        function RedirectOrError(Result, ErrorCode) {
+            if (Boolean(Result && Result.TargetUrl)) {
+                window.location.replace(Result.TargetUrl);
+            } else {
+                HandleError(ErrorCode);
             }
-            return true;
+        }
+
+        async function PostJson(Url, BodyObj) {
+            var Response = await fetch(Url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(BodyObj),
+            });
+
+            if (!Response.ok) {
+                throw new Error("Request failed: " + Url);
+            }
+
+            return Response.json();
         }
 
         async function GenSubjectId(PID) {
-            var P1 = await fetch('./GenSubjectId.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ PoolId: PID }),
-            });
-            Result = await P1.json();
-            return Result;
+            return PostJson("./GenSubjectId.php", { PoolId: PID });
         }
 
         async function LogLanding() {
-
             // Set PpantIds.PoolId and PpantIds.SubjectId
             var PpantIds = {};
             if (!PoolId && Boolean(SubjectId)) {
                 PpantIds.PoolId = null;
                 PpantIds.SubjectId = SubjectId;
-
             } else if (Boolean(PoolId) && Boolean(SubjectId)) {
                 PpantIds.PoolId = PoolId;
                 PpantIds.SubjectId = SubjectId;
-
             } else {
-                alert("An error has occurred.\n" +
-                    "Please report error code #000 " +
-                    "to Sophie (sj483@sussex.ac.uk).");
-                window.location.replace("./Error.html?PoolId=" +
-                    PoolId + "&SubjectId=" + SubjectId + "#");
+                HandleError("#000");
+                return null;
             }
 
             // Call LogLanding.php
-            var P1 = await fetch('./LogLanding.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(PpantIds)
-            });
-            Result = await P1.json();
-            return Result;
+            return PostJson("./LogLanding.php", PpantIds);
+        }
+
+        async function LogAndRedirect(ErrorCode) {
+            var Result = await LogLanding();
+            if (Result === null) {
+                return;
+            }
+            RedirectOrError(Result, ErrorCode);
+        }
+
+        async function GenLogAndRedirect(ErrorCode) {
+            var Result = await GenSubjectId(PoolId);
+            SubjectId = Result.SubjectId;
+            await LogAndRedirect(ErrorCode);
         }
 
         function OnBodyLoad() {
             // Show form if needed:
             if (GetUserInput) {
-                document.getElementById('IdForm').style.visibility = 'visible';
+                var Form = document.getElementById("IdForm");
+                Form.style.visibility = "visible";
             }
 
             // Add an event listener:
-            InputBox = document.getElementById("Input_ID");
+            var InputBox = document.getElementById("Input_ID");
             InputBox.addEventListener("keydown", function (Event) {
-                // Number 13 is the "Enter" key on the keyboard
-                if (Event.keyCode === 13) {
+                if (Event.key === "Enter") {
                     // Cancel the default action, if needed
                     Event.preventDefault();
                     // Submit the form:
@@ -89,109 +118,106 @@
             });
         }
 
-        function SubmitForm() {
-            var Input = document.getElementById('Input_ID').value;
-            if (Input.length === 24 || (Input.length === 5 && /^[0-9]+$/.test(Input))) {
-                PoolId = Input;
-                GenSubjectId(PoolId)
-                    .then(function (P1) {
-                        SubjectId = P1.SubjectId;
-                    })
-                    .then(function () { P2 = LogLanding(); return P2; })
-                    .then(function (P2) {
-                        if (Boolean(P2.TargetUrl)) {
-                            window.location.replace(P2.TargetUrl);
-                        } else {
-                            alert("An error has occurred.\n" +
-                                "Please report error code #001 " +
-                                "to Sophie (sj483@sussex.ac.uk).");
-                            window.location.replace("./Error.html?PoolId=" +
-                                PoolId + "&SubjectId=" + SubjectId + "#");
-                        }
-                    });
-                return;
+        async function SubmitForm() {
+            var Input = document.getElementById("Input_ID").value;
+            var ErrorCode = null;
 
-            } else if (Input.length === 8) {
-                SubjectId = Input;
-                PoolId = null;
-                LogLanding()
-                    .then(function (P2) {
-                        if (Boolean(P2.TargetUrl)) {
-                            window.location.replace(P2.TargetUrl);
-                        } else {
-                            alert("An error has occurred.\n" +
-                                "Please report error code #002 " +
-                                "to Sophie (sj483@sussex.ac.uk).");
-                            window.location.replace("./Error.html?PoolId=" +
-                                PoolId + "&SubjectId=" + SubjectId + "#");
-                        }
-                    });
-                return;
-            } else {
-                alert("Please enter a valid subjectId.");
+            try {
+                if (
+                    Input.length === 24 ||
+                    (Input.length === 5 && /^[0-9]+$/.test(Input))
+                ) {
+                    PoolId = Input;
+                    ErrorCode = "#001";
+                    await GenLogAndRedirect(ErrorCode);
+                    return;
+                }
+
+                if (Input.length === 8) {
+                    SubjectId = Input;
+                    PoolId = null;
+                    ErrorCode = "#002";
+                    await LogAndRedirect(ErrorCode);
+                    return;
+                }
+
+                alert("Please enter a valid paticiapnt ID.");
+            } catch (Err) {
+                if (ErrorCode) {
+                    HandleError(ErrorCode);
+                }
             }
         }
 
         // --- Execute functions ---
         var GetUserInput = false;
-        if ((!PoolId) && (!SubjectId)) {
-            // Get user input
-            GetUserInput = true;
+        async function Init() {
+            var ErrorCode = "#004";
 
-        } else {
-            // Call GenSubjectId, no user input required, and then redirect:
-            if (!PoolId && Boolean(SubjectId)) {
-                LogLanding().then(function (P1) {
-                    if (Boolean(P1.TargetUrl)) {
-                        window.location.replace(P1.TargetUrl);
-                    } else {
-                        alert("An error has occurred.\n" +
-                            "Please report error code #003 " +
-                            "to Sophie (sj483@sussex.ac.uk).");
-                        window.location.replace("./Error.html?PoolId=" +
-                            PoolId + "&SubjectId=" + SubjectId + "#");
-                    }
-                });
-            } else {
-                GenSubjectId(PoolId)
-                    .then(function (P1) {
-                        SubjectId = P1.SubjectId;
-                    })
-                    .then(function () { P2 = LogLanding(); return P2; })
-                    .then(function (P2) {
-                        if (Boolean(P2.TargetUrl)) {
-                            window.location.replace(P2.TargetUrl);
-                        } else {
-                            alert("An error has occurred.\n" +
-                                "Please report error code #004 " +
-                                "to Sophie (sj483@sussex.ac.uk).");
-                            window.location.replace("./Error.html?PoolId=" +
-                                PoolId + "&SubjectId=" + SubjectId + "#");
-                        }
-                    });
+            if ((!PoolId) && (!SubjectId)) {
+                // Get user input
+                GetUserInput = true;
+                return;
             }
 
+            try {
+                // No user input required; call and redirect.
+                if (!PoolId && Boolean(SubjectId)) {
+                    ErrorCode = "#003";
+                    await LogAndRedirect(ErrorCode);
+                } else {
+                    ErrorCode = "#004";
+                    await GenLogAndRedirect(ErrorCode);
+                }
+            } catch (Err) {
+                HandleError(ErrorCode);
+            }
         }
+        Init();
     </script>
 
 </head>
 
 <body onload="OnBodyLoad()">
     <!-- BODY -->
-    <div class="w3-container" style="width:700px;visibility:hidden" id="IdForm">
+    <div
+        class="w3-container"
+        style="width:700px;visibility:hidden"
+        id="IdForm"
+    >
         <h1>Sign in</h1>
         <p>Please enter your participant ID in the box below.</p>
-        <p>If you have arrived at this page via Prolific, this will be your Prolific ID.</p>
-        <p>If you have arrived at this page via SONA, this will be your SONA Unique ID.</p>
+        <p>
+            If you have arrived at this page via Prolific, this will be 
+            your Prolific ID.
+        </p>
+        <p>
+            If you have arrived at this page via SONA, this will be your
+            SONA Unique ID.
+        </p>
         <form>
             <table class="w3-table">
                 <tbody>
                     <tr>
-                        <td width="280px"><input id="Input_ID" type="text" name="ID" placeholder="Participation ID"
-                                size="26"></td>
+                        <td width="280px">
+                            <input
+                                id="Input_ID"
+                                type="text"
+                                name="ID"
+                                placeholder="Participation ID"
+                                size="26"
+                            >
+                        </td>
                     </tr>
                     <tr>
-                        <td width="280px"><button type="button" onclick="SubmitForm()">Submit</button></td>
+                        <td width="280px">
+                            <button
+                                type="button"
+                                onclick="SubmitForm()"
+                            >
+                                Submit
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
