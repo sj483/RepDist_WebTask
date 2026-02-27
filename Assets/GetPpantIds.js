@@ -47,7 +47,6 @@ function GetPpantIds() {
 	    // Keep PoolId and SubjectId at null
 	}
 	
-
 	// If TaskIO has been set above, add vars in here!
 	if (typeof(TaskIO)=="object") {
 	    TaskIO.SubjectId = SubjectId;
