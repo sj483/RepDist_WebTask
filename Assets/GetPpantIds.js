@@ -1,58 +1,35 @@
-function GetPpantIds() {
-    // Grab participant IDs (PoolId and/or SubjectId) from URL
-	var CurrentUrl = window.location.href;
-
-	// If there is no query string, do nothing
-	if (CurrentUrl.indexOf("?") === -1) {
-		return; // PoolId and SubjectId stay null
-	}
-
-	var QueryStart = CurrentUrl.indexOf("?") + 1;
-	var QueryEnd = CurrentUrl.indexOf("#") + 1 || CurrentUrl.length + 1;
-	var Query = CurrentUrl.slice(QueryStart, QueryEnd - 1);
-	var Pairs = Query.replace(/\+/g, " ").split("&");
-	var UrlParams = {};
-	var i, n, v, nv;
-	if (!(Query === CurrentUrl || Query === "")) {
-	    for (i = 0; i < Pairs.length; i++) {
-		    nv = Pairs[i].split("=", 2);
-		    n = decodeURIComponent(nv[0]);
-		    v = decodeURIComponent(nv[1]);
-		    if (!UrlParams.hasOwnProperty(n)) {
-		        UrlParams[n] = [];
-		    }
-		    UrlParams[n].push(nv.length === 2 ? v : null);
-	    }
-	}
-	var IsEmpty = true;
-	for(var Key in UrlParams) {
-	    if (UrlParams.hasOwnProperty(Key)) {
-	        IsEmpty = false;
-	    }
-	}
-	if (!IsEmpty) {
-	    if (UrlParams.hasOwnProperty('PROLIFIC_PID')) {
-	        PoolId = UrlParams.PROLIFIC_PID[0];
-	    }
-	    if (UrlParams.hasOwnProperty('SONA_PID')) {
-	        PoolId = UrlParams.SONA_PID[0];
-	    }
-		if (UrlParams.hasOwnProperty('PoolId')) {
-	        PoolId = UrlParams.PoolId[0];
-	    }
-	    if (UrlParams.hasOwnProperty('SubjectId')) {
-	        SubjectId = UrlParams.SubjectId[0];
-	    }
-	} else {
-	    // Keep PoolId and SubjectId at null
-	}
-	
-	// If TaskIO has been set above, add vars in here!
-	if (typeof(TaskIO)=="object") {
-	    TaskIO.SubjectId = SubjectId;
-	}
-}
-
 var PoolId = null;
 var SubjectId = null;
+
+function getParamOrNull(params, key) {
+    return params.has(key) ? params.get(key) : null;
+}
+
+function GetPpantIds() {
+    if (window.location.search === "") {
+        return;
+    }
+
+    var params = new URLSearchParams(window.location.search);
+
+    var fromPoolId = getParamOrNull(params, "PoolId");
+    var fromSona = getParamOrNull(params, "SONA_PID");
+    var fromProlific = getParamOrNull(params, "PROLIFIC_PID");
+
+    // Keep the old precedence: PoolId > SONA_PID > PROLIFIC_PID
+    PoolId = fromPoolId;
+    if (PoolId === null) {
+        PoolId = fromSona;
+    }
+    if (PoolId === null) {
+        PoolId = fromProlific;
+    }
+
+    SubjectId = getParamOrNull(params, "SubjectId");
+
+    if (typeof TaskIO === "object" && TaskIO !== null) {
+        TaskIO.SubjectId = SubjectId;
+    }
+}
+
 GetPpantIds();
