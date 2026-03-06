@@ -1,99 +1,53 @@
-async function LogUnfocus() {
-    // Set the data to send
-    var Data = {
-        SubjectId: SubjectId,
-        FunctionCall: 'LogUnfocus',
-        Location: window.location.href
-    };
-    
-    // Send the data
-    var P1 = await fetch('./LogUnfocus.php', {
-		method: 'post',
-		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-		body: JSON.stringify(Data)
-	});
-
-    // Return the Result ...
-    // ... an object with two properties, 'Count' and 'Notice'.
-    var Result = await P1.json();
-    return Result;
-}
-
-async function LogRefocus() {
-    // Set the data to send
-    var Data = {
-        SubjectId: SubjectId,
-        FunctionCall: 'LogRefocus'
-    };
-    
-    // Send the data
-    var P1 = await fetch('./LogUnfocus.php', {
-		method: 'post',
-		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-		body: JSON.stringify(Data)
-	});
-
-    // Return the Result ...
-    // ... an object with one property, 'Bool'.
-    var Result = await P1.json();
-    return Result;
-}
-
-async function SetFinalState() {
-    // Set the data to send
-    var Data = {
-        SubjectId: SubjectId,
-        FunctionCall: 'SetFinalState'
-    };
-    // Send the data
-    var P1 = await fetch('./LogUnfocus.php', {
-		method: 'post',
-		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-		body: JSON.stringify(Data)
-	});
-    // Return the Result ...
-    // ... an object with one property, 'StateSet'
-    var Result = await P1.json();
-    return Result;
-}
-
-
-
 var EnforceUnfocus = false;
+
+async function LogDeltaVisibility(ComingOrGoing) {
+    // Set the data to send
+    var Data = {
+        SubjectId: SubjectId,
+        Href: window.location.href
+    };
+
+    // Send the data
+    var Daddy;
+    if (ComingOrGoing === 'Going') {
+        Daddy = './LogUnfocus.php';
+    } else {
+        Daddy = './LogRefocus.php';
+    }
+    var P1 = await fetch(Daddy, {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Data)
+    });
+
+    // Unpack the Result
+    var Result = await P1.json();
+    var Bool = Result.Bool;
+    var TargetUrl = Result.TargetUrl;
+    var Notice = Result.Notice;
+    var Reason = Result.Reason;
+
+    // Branch depending on the Result
+    if (!Bool) {
+        alert(Notice);
+    } else {
+        TaskIO.Sent2Coventry = Reason;
+        await WriteTaskIO();
+        window.location.replace(TargetUrl);
+    }
+    return;
+}
+
 document.addEventListener("visibilitychange", (event) => {
-    if (document.visibilityState != "visible") {
-        if (Boolean(SubjectId) && EnforceUnfocus) {
-            LogUnfocus().then(async function(P1){
-                if (P1.Count < 4) {
-                    alert(P1.Notice);
-                    LogRefocus().then(async function(P2){
-                        if (P2.Bool) {
-                            // Away for too long
-                            TaskIO.KickedOff = 'Away for too long';
-                            await WriteTaskIO(); 
-                            SetFinalState().then(function(P3){
-                                if(P3){
-                                    window.location.replace('./Coventry.html?SubjectId='+SubjectId+'&Reason=0#');
-                            }else {
-                                    alert('ERROR!. Please contact the researcher.'); ///maybe do something more elegant here
-                            }}
-                        ) 
-                            
-                        }
-                    });
-                } else {
-                    // Away too many times
-                    TaskIO.KickedOff = 'Away too often';
-                    await WriteTaskIO();
-                    SetFinalState().then(function(P3){
-                        if(P3){
-                            window.location.replace('./Coventry.html?SubjectId='+SubjectId+'&Reason=1#');
-                    }else {
-                            alert('ERROR!. Please contact the researcher.'); ///maybe do something more elegant here
-                    }})
-                    
-                }
-            });
-        }
+    if (!(Boolean(SubjectId) && EnforceUnfocus)) {
+        return;
+    }
+    if (document.visibilityState === "hidden") {
+        LogDeltaVisibility('Going');
+    } else {
+        LogDeltaVisibility('Coming');
     }
 });
