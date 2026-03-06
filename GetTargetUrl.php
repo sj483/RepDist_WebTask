@@ -15,13 +15,15 @@ function GetTargetUrl($Conn, $SubjectId)
 		}
 	}
 
-	if ($State < 0) {
-		return "./Coventry.html?SubjectId=$SubjectId#";
-		// State == -1: Clicked away too many times;
-		// State == -2: Clicked away for too long;
-	}
-
 	switch ($State) {
+		case -2:
+			// Clicked away for too long
+			return "./Coventry.html?SubjectId=$SubjectId&State=-2#";
+
+		case -1:
+			// Clicked away for too often
+			return "./Coventry.html?SubjectId=$SubjectId&State=-1#";
+			
 		case 0:
 			return "./Consent.html?SubjectId=$SubjectId#";
 

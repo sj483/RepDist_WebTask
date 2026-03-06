@@ -1,58 +1,98 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Sorry!</title>
-<link rel="stylesheet" href="./Assets/w3.css">
-<link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
+    <title>Sorry!</title>
+    <link rel="stylesheet" href="./Assets/w3.css">
+    <link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
 
-<style>
-body {
-    margin-left: 50px;
-    margin-top: 20px; 
-    margin-right: 50px; 
-}
-</style>
+    <style>
+        body {
+            margin-left: 50px;
+            margin-top: 20px;
+            margin-right: 50px;
+        }
+    </style>
 
-<!-- Get participant IDs passed in from URL -->
-<script src="./GetPpantIds.js"></script>
+    <!-- Get participant IDs passed in from URL -->
+    <script src="./GetPpantIds.js"></script>
 
-<script>
-async function GetReason() {
-    // Set the data to send
-    var Data = {
-        SubjectId: SubjectId,
-        Href: window.location.href
-    };
+    <!-- Helper for posting JSON data -->
+    <script src="./Assets/PostJson.js"></script>
 
-    // Send the data
-    var P1 = await fetch('./CoventryActions.php', {
-		method: 'post',
-		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-		body: JSON.stringify(Data)
-	});
+    <script>
+        async function GetState() {
+            // Try the URL parameters first
+            var UrlParams = new URLSearchParams(window.location.search);
+            var State = UrlParams.has('State') ? UrlParams.get('State') : null;
+            if (State != null) {
+                return State;
+            }
 
-    // Return the Result ...
-    // ... an object with one property, 'HTML'.
-    var Result = await P1.json();
-    return Result;
-}
+            // Query the server otherwise
+            var Data = {
+                SubjectId: SubjectId
+            }
+            try {
+                var Result = await PostJson('./CoventryActions.php', Data);
+                return Result.State;
+            } catch (Err) {
+                console.error('GetState failed:', Err);
+                alert(
+                    "An error has occurred.\n" +
+                    "Please report error code #006 " +
+                    "to Sophie (sj483@sussex.ac.uk)."
+                );
+                return null;
+            }
+        }
 
-function OnBodyLoad(){
-    if (SubjectId) {
-        GetReason().then(function(P1){
-            var iHTML = P1.HTML;
-            document.getElementById('Message').innerHTML = iHTML;
-            document.getElementById('Message').style = "max-width:700px;visibility:visible;";
-        });
-    } else {
-        document.getElementById('Message').style = "max-width:700px;visibility:visible;";
-    }
-}
-</script>
+        async function GetReason() {
+            // Get the State from the URL
+            var State = await GetState();
+
+            // Set and return the Reason
+            var Reason;
+            if (State === -2) {
+                Reason = "<h1><b>Oops...</b></h1>" +
+                    "<p>Sorry, it appears that you clicked away from the experiment for too long.</p>"
+                "<p>This means that we will not be able to use your data &#128546;.</p>"
+                "<p>Your participation has been discontinued.</p>";
+            } else if (State === -1) {
+                Reason = "<h1><b>Oops...</b></h1>"
+                "<p>Sorry, it appears that you clicked away from the experiment too many times.</p>"
+                "<p>This means that we will not be able to use your data &#128546;.</p>"
+                "<p>Your participation has been discontinued.</p>";
+            } else {
+                Reason = "<p>Sorry, it appears that you were not giving us your full attention.</p>" +
+                    "<p>This means that we will not be able to use your data &#128546;.</p>" +
+                    "<p>Your participation has been discontinued.</p>";
+            }
+        }
+
+        function OnBodyLoad() {
+            if (SubjectId) {
+                GetReason().then(function(P1) {
+                    var iHTML = P1.HTML;
+                    document.getElementById('Message').innerHTML = iHTML;
+                    document.getElementById('Message').style =
+                        "max-width:700px;visibility:visible;";
+                });
+            } else {
+                document.getElementById('Message').style =
+                    "max-width:700px;visibility:visible;";
+            }
+        }
+    </script>
 </head>
 
 <body onload="OnBodyLoad()">
-<div class="w3-container" style="max-width:700px;visibility:hidden" id ="Message">
-</div>
+    <div class="w3-container" style="max-width:700px;visibility:hidden" id="Message">
+        <h1><b>Oops...</b></h1>
+        <p>Sorry, it appears that you were not giving us your full attention.</p>
+        <p>This means that we will not be able to use your data &#128546;.</p>
+        <p>Your participation has been discontinued.</p>
+    </div>
 </body>
+
 </html>

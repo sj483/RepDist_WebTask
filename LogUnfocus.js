@@ -39,6 +39,11 @@ async function LogDeltaVisibility(ComingOrGoing) {
         }
     } catch (Err) {
         console.error('LogDeltaVisibility failed:', Err);
+        alert(
+                "An error has occurred.\n" +
+                "Please report error code #005 " +
+                "to Sophie (sj483@sussex.ac.uk)."
+            );
     }
     return;
 }
@@ -52,4 +57,5 @@ document.addEventListener("visibilitychange", () => {
     } else {
         void LogDeltaVisibility('Coming');
     }
+    return;
 });
