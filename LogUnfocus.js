@@ -1,53 +1,55 @@
 var EnforceUnfocus = false;
 
 async function LogDeltaVisibility(ComingOrGoing) {
-    // Set the data to send
-    var Data = {
-        SubjectId: SubjectId,
-        Href: window.location.href
-    };
+    try {
+        // Set the data to send
+        var Data = {
+            SubjectId: SubjectId,
+            Href: window.location.href
+        };
 
-    // Send the data
-    var Daddy;
-    if (ComingOrGoing === 'Going') {
-        Daddy = './LogUnfocus.php';
-    } else {
-        Daddy = './LogRefocus.php';
-    }
-    var P1 = await fetch(Daddy, {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Data)
-    });
+        // Send the data
+        var Daddy;
+        if (ComingOrGoing === 'Going') {
+            Daddy = './LogUnfocus.php';
+        } else {
+            Daddy = './LogRefocus.php';
+        }
 
-    // Unpack the Result
-    var Result = await P1.json();
-    var Bool = Result.Bool;
-    var TargetUrl = Result.TargetUrl;
-    var Notice = Result.Notice;
-    var Reason = Result.Reason;
+        // Unpack the Result
+        var Result = await PostJson(Daddy, Data);
+        var {
+            Bool: Bool = false,
+            TargetUrl: TargetUrl = '',
+            Notice: Notice = '',
+            Reason: Reason = ''
+        } = Result || {};
 
-    // Branch depending on the Result
-    if (!Bool) {
-        alert(Notice);
-    } else {
-        TaskIO.Sent2Coventry = Reason;
-        await WriteTaskIO();
-        window.location.replace(TargetUrl);
+        // Branch depending on the Result
+        if (!Bool) {
+            if (Notice) {
+                alert(Notice);
+            }
+        } else {
+            TaskIO.Sent2Coventry = Reason;
+            await WriteTaskIO();
+            if (TargetUrl) {
+                window.location.replace(TargetUrl);
+            }
+        }
+    } catch (Err) {
+        console.error('LogDeltaVisibility failed:', Err);
     }
     return;
 }
 
-document.addEventListener("visibilitychange", (event) => {
+document.addEventListener("visibilitychange", () => {
     if (!(Boolean(SubjectId) && EnforceUnfocus)) {
         return;
     }
     if (document.visibilityState === "hidden") {
-        LogDeltaVisibility('Going');
+        void LogDeltaVisibility('Going');
     } else {
-        LogDeltaVisibility('Coming');
+        void LogDeltaVisibility('Coming');
     }
 });

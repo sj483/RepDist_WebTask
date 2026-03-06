@@ -18,6 +18,9 @@
     <!-- Get participant IDs passed in from URL -->
     <script src="./Assets/GetPpantIds.js"></script>
 
+    <!-- Helper for posting JSON data -->
+    <script src="./Assets/PostJson.js"></script>
+
     <!-- Exclusion check -->
     <script src="./Assets/ExclusionCheck.js"></script>
 
@@ -47,20 +50,6 @@
             } else {
                 HandleError(ErrorCode);
             }
-        }
-
-        async function PostJson(Url, BodyObj) {
-            var Response = await fetch(Url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(BodyObj),
-            });
-
-            if (!Response.ok) {
-                throw new Error("Request failed: " + Url);
-            }
-
-            return Response.json();
         }
 
         async function GenSubjectId(PID) {
