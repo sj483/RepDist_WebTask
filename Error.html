@@ -25,16 +25,22 @@ body {padding: 30px 0;}
     OnBodyLoad = function() {
         const Params = new URLSearchParams(window.location.search);
         // Extract the value of subjectId and error
+        var PoolId = Params.get("PoolId");
         var SubjectId = Params.get("SubjectId");
         var ErrorCode = Params.get("ErrorCode");
+        if (Boolean(PoolId) && PoolId != 'null') {
+            document.getElementById("PoolId").innerHTML = PoolId;
+            document.getElementById("CrashInfo0").style.visibility = 
+                'visible';
+        }
         if (Boolean(SubjectId) && SubjectId != 'null') {
             document.getElementById("SubjectId").innerHTML = SubjectId;
-            document.getElementById("CrashInfo0").style.visibility = 
+            document.getElementById("CrashInfo1").style.visibility = 
                 'visible';
         }
         if (Boolean(ErrorCode)) {
             document.getElementById("ErrorCode").innerHTML = ErrorCode;
-            document.getElementById("CrashInfo1").style.visibility = 
+            document.getElementById("CrashInfo2").style.visibility = 
                 'visible';
         }
     }
@@ -45,12 +51,15 @@ body {padding: 30px 0;}
 <center>
 <h1>Oops! &#x1f631;</h1>
 <p>Something has gone wrong.</p>
-<p>Please contact Sophie Johnson (sj483@sussex.ac.uk) to report this.</p>
+<p>Please report this to Sophie Johnson (sj483@sussex.ac.uk).</p>
 <p>
 <div id="CrashInfo0" style="visibility: hidden;">
-Participant ID: <a id="SubjectId"></a>
+Pool ID: <a id="PoolId"></a>
 </div>
 <div id="CrashInfo1" style="visibility: hidden;">
+Subject ID: <a id="SubjectId"></a>
+</div>
+<div id="CrashInfo2" style="visibility: hidden;">
 Error code: <a id="ErrorCode"></a>
 </div>
 </p>

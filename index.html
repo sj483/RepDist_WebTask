@@ -23,23 +23,20 @@
     <script src="./Assets/ExclusionCheck.js"></script>
 
     <script>
-        function BuildErrorUrl() {
+        function BuildErrorUrl(ErrorCode) {
             return (
                 "./Error.html?PoolId=" +
                 encodeURIComponent(String(PoolId)) +
                 "&SubjectId=" +
                 encodeURIComponent(String(SubjectId)) +
+                '&ErrorCode=' +
+                encodeURIComponent(String(ErrorCode)) +
                 "#"
             );
         }
 
         function HandleError(ErrorCode) {
-            alert(
-                "An error has occurred.\n" +
-                "Please report error code " + ErrorCode +
-                " to Sophie (sj483@sussex.ac.uk)."
-            );
-            window.location.replace(BuildErrorUrl());
+            window.location.replace(BuildErrorUrl(ErrorCode));
         }
 
         function RedirectOrError(Result, ErrorCode) {
@@ -51,7 +48,7 @@
         }
 
         async function GenSubjectId(PID) {
-            return PostJson("./GenSubjectId.php", { PoolId: PID });
+            return PostJson("./Assets/GenSubjectId.php", { PoolId: PID });
         }
 
         async function LogLanding() {
