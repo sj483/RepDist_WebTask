@@ -47,7 +47,7 @@ if ($Virgin) {
     // They HAVE been here before
     $Sql01 = "INSERT INTO Register 
         (PoolId, SubjectId, State, DateTime_Landing) 
-        VALUES ($PoolId, '$SubjectId', 0,'$DateTime_Landing')";
+        VALUES ('$PoolId', '$SubjectId', 0,'$DateTime_Landing')";
     if ($Conn->query($Sql01) === false) {
         $Conn->close();
         die('Query Sql01 failed to execute successfully!');
