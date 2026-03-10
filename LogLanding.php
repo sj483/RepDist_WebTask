@@ -6,7 +6,7 @@ require __DIR__ . '/GetTargetUrl.php';
 // Connect to the database
 $Conn = new mysqli($Servername, $Username, $Password, $Dbname);
 if ($Conn->connect_error) {
-    die("Connection failed: " . $Conn->connect_error);
+    die("Database connection failed: " . $Conn->connect_error);
 }
 
 // Set $DateTime_Landing

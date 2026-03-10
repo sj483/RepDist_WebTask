@@ -16,7 +16,7 @@ function GetPpantIds() {
     var fromSona = getParamOrNull(params, "SONA_PID");
     var fromProlific = getParamOrNull(params, "PROLIFIC_PID");
 
-    // Keep the old precedence: PoolId > SONA_PID > PROLIFIC_PID
+    // PoolId > SONA_PID > PROLIFIC_PID
     PoolId = fromPoolId;
     if (PoolId === null) {
         PoolId = fromSona;

@@ -15,4 +15,3 @@ $PoolId = $Input['PoolId'];
 $Hash = md5($PoolId);
 $Result['SubjectId'] = substr($Hash, -8);
 echo json_encode($Result);
-?>

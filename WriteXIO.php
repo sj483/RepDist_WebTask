@@ -43,7 +43,8 @@ $Now = new DateTimeImmutable("now", new DateTimeZone('Europe/London'));
 $DateTime_Write = $Now->format('Y-m-d\TH:i:s');
 
 // Save the data
-$Sql00 = "CALL Record$DataType('$SubjectId','$DateTime_Write','$ClientTimeZone','$Data')";
+$Sql00 = "CALL Record$DataType(
+	'$SubjectId','$DateTime_Write','$ClientTimeZone','$Data')";
 if (($Conn->query($Sql00)) === false) {
 	$Conn->close();
 	die('Query Sql00 failed to execute successfully.');

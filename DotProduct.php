@@ -1,4 +1,4 @@
-<?
+<?php
 function DotProduct($a,$b) {
 	$d = sizeof($a);
 	if ($d != sizeof($b)) {
