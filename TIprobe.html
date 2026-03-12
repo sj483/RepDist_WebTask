@@ -4,7 +4,7 @@
 <title>TI Probe</title>
 
 <!-- Set the favicon logo -->
-<link rel="icon" href="./Logo.png" type="image/x-icon" />
+<link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
 
 <!-- Unpack the main JSpsych module -->
 <script src="https://unpkg.com/jspsych@7.3.3"></script>
@@ -23,33 +23,45 @@
 
 <!-- Styling -->
 <style>
-    :root {
-    --ImgWidth1: 516; /* default value */
-    }
-    img:hover{border: 2px solid #00ffff;width: var(--ImgWidth1);}
-    body{background-color:#808080;}
+:root {
+    --ImgWidth1: 516;
+}
+img:hover{border: 2px solid #00ffff;width: var(--ImgWidth1);}
+body{background-color:#808080;}
 </style>
+
 <script>
+// --- Session-specific global variables ---
+var TimelineVars;
 var ScreenHeight = window.screen.height;
-var heightFactor = 13/27; // Proportion of screen height to use for imgs
+var HeightFactor = 13/27;
 var BorderWidth = 2;
-var ImgWidth0 = ScreenHeight * heightFactor;
+var ImgWidth0 = ScreenHeight * HeightFactor;
 var ImgWidth1 = ImgWidth0 - (2*BorderWidth);
-document.documentElement.style.setProperty('--ImgWidth1', ImgWidth1 + 'px');
-</script>
-    
-<script>
+document.documentElement.style.setProperty('--ImgWidth1',ImgWidth1+'px');
+
+// --- Trial-specific global variables ---
+var EnforceUnfocus = false;
+var PairId = null;
+var PosOnRight = null;
+var StartTimeOfTrial = null;
+var SelectedRight = null;
+var Correct = null;
+var RT = null;
+var ResponseMade = false;
+
 // --- TaskIO SETUP ---
 var TaskIO = {};
 TaskIO.SubjectId = null;
 TaskIO.DateTime_Start = null;
 TaskIO.ClientTimeZone = null;
+TaskIO.GroupId = '';
 TaskIO.Pairs = {};
 TaskIO.Trials = [];
 </script>
 
 <!-- Get participant IDs passed in from URL -->
-<script src="./GetPpantIds.js"></script>
+<script src="./Assets/GetPpantIds.js"></script>
 
 <!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
 <script src="./Assets/SetDateTime.js"></script>
@@ -67,54 +79,6 @@ TaskIO.Trials = [];
 <script src="./ObjectSpec.js"></script>
   
 <script>
-// Function to get the timeline variables
-async function GetTimelineVars() {
-    var Timeline = [];
-    for (iRep = 0; iRep < 2; iRep++) { // We normally run 2 reps
-        var Order = [0,1,2,3,4,5,6,7];
-        Shuffle(Order);
-        for (iOrder = 0; iOrder < 8; iOrder++) {
-            var cPairId = Pairs[Order[iOrder]].PairId;
-            var cPos = Pairs[Order[iOrder]].Pos;
-            var cNeg = Pairs[Order[iOrder]].Neg;
-            var cP1 = await fetch('./Assets/RandBit.php');
-            var cBit = await cP1.json();
-            cBit = cBit==1;
-            Timeline.push({PairId:cPairId,Pos:cPos,Neg:cNeg,PosOnRight:cBit});
-        }
-    }
-    return Timeline;
-}
-
-// Function to save the TaskIO variable
-async function WriteTaskIO() {
-    var Data = {};
-    Data.FunctionCall = 'WriteTIprobeIO';
-	Data.SubjectId = SubjectId;
-    Data.ClientTimeZone = ClientTimeZone;
-    Data.TIprobeIO = JSON.stringify(TaskIO);
-
-    //Send data to php script
-	var P1 = await fetch('./WriteXIO.php', {
-		method: 'post',
-		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-		body: JSON.stringify(Data)
-	});
-
-    // Return the result
-    var Result = await P1.json();
-    return Result;
-}
-
-// Specify the EnterFullscreen event
-var EnterFullscreen = {
-    type: jsPsychFullscreen,
-    message: '<p style="color:black;font-size:30px;">Just a few more trials to go. This will only take 1 extra minute.</p><p style="color:black;font-size:30px;">You will not get any feedback on these trials.</p><p style="color:black;font-size:30px;">Please try to respond to each one, even if you have to guess.</p><p style="color:black;font-size:30px;">Click the button below to continue.</p>',
-    fullscreen_mode: true,
-    delay_after: 1000,
-    on_finish: function() {EnforceUnfocus = true;}
-};
-
 // Chain together the following...
 // ... 1) GetAssignment()
 // ... 2) Make the Pairs variable
@@ -123,33 +87,39 @@ var EnterFullscreen = {
 // ... 5) Call jsPsych.run([TrialLoop])
 async function StartUp() {
     // (1)...
-    Assignment = await GetAssignment();
+    var Assignment = await GetAssignment();
+    TaskIO.GroupId = Assignment.GroupId;
+    var ImgPerm = Assignment.ImgPerm
 
     // (2)...
+    var Pairs = [];
     for (iPair = 0; iPair < 5; iPair++){
-        var Pos = 't'+String.fromCharCode(65+iPair);
-        var Neg = 't'+String.fromCharCode(66+iPair);
-        Pairs.push({PairId:iPair,Pos:Assignment[Pos],Neg:Assignment[Neg]});
+        var PosId = String.fromCharCode(65+iPair);
+        var NegId = String.fromCharCode(66+iPair);
+        Pairs.push({
+            PairId: iPair,
+            Pos: ImgPerm[PosId],
+            Neg: ImgPerm[NegId]});
     }
     Pairs.push({
-        PairId:5,
-        Pos:Assignment['tB'],
-        Neg:Assignment['tD']
+        PairId: 5,
+        Pos: Assignment['B'],
+        Neg: Assignment['D']
     });
     Pairs.push({
-        PairId:6,
-        Pos:Assignment['tC'],
-        Neg:Assignment['tE']
+        PairId: 6,
+        Pos: Assignment['C'],
+        Neg: Assignment['E']
     });
     Pairs.push({
-        PairId:7,
-        Pos:Assignment['tB'],
-        Neg:Assignment['tE']
+        PairId: 7,
+        Pos: Assignment['B'],
+        Neg: Assignment['E']
     });
     TaskIO.Pairs = Pairs;
 
     // (3)...
-    TimelineVars = await GetTimelineVars();
+    TimelineVars = await GetTimelineVars(Pairs);
 
     // (4)...
     var TrialLoop = {
@@ -162,7 +132,6 @@ async function StartUp() {
     jsPsych.run([PreloadImgs,EnterFullscreen,TrialLoop,ExitFullscreen]);
 }
 StartUp();
-
 </script>
 </head>
 <body>

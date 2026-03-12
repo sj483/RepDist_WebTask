@@ -6,7 +6,7 @@ async function GetAssignment() {
         Assignment.GroupId = 'Ani';
         Assignment.ImgPerm = {};
         for (iI = 0; iI < 6; iI++) {
-            var LocId  = String.fromCharCode(65 + iI);
+            var LocId = String.fromCharCode(65 + iI);
             Assignment.ImgPerm[LocId] = Assignment.GroupId + iI.toString();
         }
         return Assignment;
@@ -37,25 +37,34 @@ function GetImgsToPreload() {
 }
 
 async function GetTimelineVars(Pairs) {
+    var nReps;
+    var UnshuffledOrder;
     var Timeline = [];
-    for (iRep = 0; iRep < 1; iRep++) { /////////////////////////////////////////////////// 25 reps????
-        var Order = [0, 1, 2, 3, 4];
-        Shuffle(Order);
-        for (iOrder = 0; iOrder < 5; iOrder++) {
-            var cPairId = Pairs[Order[iOrder]].PairId;
-            var cPos = './Imgs/' + Pairs[Order[iOrder]].Pos + '.png';
-            var cNeg = './Imgs/' + Pairs[Order[iOrder]].Neg + '.png';
-            var cP1 = await fetch('./Assets/RandBit.php');
-            var cBit = await cP1.json();
-            cBit = cBit == 1;
-            Timeline.push({
-                PairId: cPairId,
-                Pos: cPos,
-                Neg: cNeg,
-                PosOnRight: cBit
-            });
-        }
+    if (Pairs.length == 5) {
+        nReps = 1; //////////////////////////////////////////// 25 reps????
+        UnshuffledOrder = [0, 1, 2, 3, 4];
+    } else {
+        nReps = 2;
+        UnshuffledOrder = [0, 1, 2, 3, 4, 5, 6, 7];
     }
+    for (iRep = 0; iRep < nReps; iRep++) { 
+            var Order = UnshuffledOrder;
+            Shuffle(Order);
+            for (iOrder = 0; iOrder < 5; iOrder++) {
+                var cPairId = Pairs[Order[iOrder]].PairId;
+                var cPos = './Imgs/' + Pairs[Order[iOrder]].Pos + '.png';
+                var cNeg = './Imgs/' + Pairs[Order[iOrder]].Neg + '.png';
+                var cP1 = await fetch('./Assets/RandBit.php');
+                var cBit = await cP1.json();
+                cBit = cBit == 1;
+                Timeline.push({
+                    PairId: cPairId,
+                    Pos: cPos,
+                    Neg: cNeg,
+                    PosOnRight: cBit
+                });
+            }
+        }
     return Timeline;
 }
 
@@ -137,6 +146,6 @@ async function OnFinishTask() {
             Please report error code #XXX to the experimenter:\n` +
             Err);
         window.location.replace(
-            "./Error.html?SubjectId="+SubjectId+'&ErrorCode=XXX#');
+            "./Error.html?SubjectId=" + SubjectId + '&ErrorCode=XXX#');
     }
 }
