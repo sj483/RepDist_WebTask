@@ -22,7 +22,7 @@ if (!isset($Input['SubjectId'])) {
 
 $Conn = new mysqli($Servername, $Username, $Password, $Dbname);
 if($Conn->connect_error) {
-	die("Connection failed: " . $Conn->connect_error);
+	die("Database connection failed: " . $Conn->connect_error);
 }
 
 // Sanitize SubjectId
@@ -95,4 +95,3 @@ if(!isset($Result['Error'])) {
 
 $Conn->close();
 echo json_encode($Result);
-?>
