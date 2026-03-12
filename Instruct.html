@@ -1,167 +1,161 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Task instructions</title>
-<meta charset="UTF-8">
-    
-<!-- Set the favicon logo -->
-<link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
+    <title>Task instructions</title>
+    <meta charset="UTF-8">
 
-<!-- Import the stylesheet -->
-<link rel="stylesheet" href="./Assets/w3.css">
+    <!-- Set the favicon logo -->
+    <link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
 
-<!-- Some more styling -->
-<style>
-body {padding: 30px 0;}
-.alert {
-    padding: 20px;
-    background-color: #f44336;
-    color: white;
-}
-.closebtn {
-    margin-left: 15px;
-    color: white;
-    font-weight: bold;
-    float: right;
-    font-size: 22px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.closebtn:hover {
-    color: black;
-}
-</style>
+    <!-- Import the stylesheet -->
+    <link rel="stylesheet" href="./Assets/w3.css">
 
-<!-- Get participant IDs passed in from URL -->
-<script src="./GetPpantIds.js"></script>
-
-<!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
-<script src="./Assets/SetDateTime.js"></script>
-
-<!-- Exclusion check -->
-<script src="./ExclusionCheck.js"></script>
-
-<!-- Import the instruction text -->
-<script src="./InstructionText.js"></script>
-
-<!-- Import the warn status  -->
-<script src="./GetWarn.js"></script>
-
-<script>
-// OnBodyLoad function
-async function OnBodyLoad() {
-
-    //GET TASK ID
-  var P1 = await fetch('./GetTaskId.php', {
-		method: 'post',
-		headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-		body: JSON.stringify({SubjectId: SubjectId})
-	})
-    //unpack the response into json
-    state = await P1.json();
-    if (state == 2) {
-        TaskId = 'TItrain';
-    } else if (state == 4) {
-        TaskId = 'TIprobe';
-    } else {
-        TaskId = false;
-    }
-
-    if (!TaskId) {
-        document.getElementById('TextArea').innerHTML = '<p>This page is for testing purposes only.</p><p>If you are reading this and you are not Sam Berens, something is horribly wrong. &#128516</p>';
-    } else if (TaskId==='TItrain') {
-        document.getElementById('TextArea').innerHTML = TItrain;
-        document.getElementById('Audio').src = './Assets/TItrain.mp3'; //CHANGE TO NEW AUDIO FILE WHEN READY
-    } else if (TaskId==='TIprobe') {
-        document.getElementById('TextArea').innerHTML = TIprobe;
-        document.getElementById('Audio').src = './Assets/oldTIprobe.mp3'; //CHANGE TO NEW AUDIO FILE WHEN READY
-    } else {
-        document.getElementById('TextArea').innerHTML = '<p>An error has occured.</p><p>Please contact the experimenter.</p>';
-    }
-
-
-    if (Warn) {    
-        //alert('Please listen to all the of the audio instructions!');
-        var Warning = document.createElement('div');
-        Warning.id = 'Warning';
-        Warning.className = 'alert';
-        Warning.innerHTML = "<span class=\"closebtn\" onclick=\"CloseWarning();\">" + 
-        "&times;</span><strong>Please listen to all of the audio instructions!</strong>";
-        document.body.prepend(Warning);
-    }
-    
-    document.getElementById('Canvas').style.visibility = 'visible';
-}
-
-// Close warning function
-function CloseWarning() {
-    document.body.removeChild(document.getElementById('Warning'));
-}
-
-// Function to log that the instructions have been presented
-async function LogInstruct() {
-    var P1 = await fetch('./InstructActions.php',{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body:JSON.stringify({Args:{ 
-            SubjectId: SubjectId,
-            DateTime_Start: DateTime_Start,
-            ClientTimeZone: ClientTimeZone,
-            TaskId: TaskId
-        }})
-    });
-    data = await P1.json();
-        if (data.Error) {
-            alert(data.Error)
+    <!-- Some more styling -->
+    <style>
+        body {
+            padding: 30px 0;
         }
-    return data;
-    }
 
+        .alert {
+            padding: 20px;
+            background-color: #f44336;
+            color: white;
+        }
 
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-// OnStartAudio function
-function OnStartAudio() {
-	UpdateDateTime();
-}
+        .closebtn:hover {
+            color: black;
+        }
+    </style>
 
-// OnFinishAudio function
-function OnFinishAudio() {
-	document.getElementById('ButtonArea').innerHTML = '<button onclick="ProgressToNext()">Continue</button>';
-}
+    <!-- Get participant IDs passed in from URL -->
+    <script src="./Assets/GetPpantIds.js"></script>
 
-// ProgressToNext function
-function ProgressToNext() {
-	LogInstruct().then(function(P2) {
-	    TargetUrl = P2.TargetUrl;
-	    if (window.location.href != TargetUrl) {
-            window.location.replace(TargetUrl);
-	    } else {
-	        location.reload();
-	    }
-    }).catch(function(Err) {
-        alert('An error has occurred.\nPlease report error code #200 to the experimenter:\n'+Err);
-        window.location.replace("./Error.html");
-    });
-}
-</script>
+    <!-- Get task IDs passed in from URL -->
+    <script src="./Assets/GetTaskId.js"></script>
+
+    <!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
+    <script src="./Assets/SetDateTime.js"></script>
+
+    <!-- Exclusion check -->
+    <script src="./Assets/ExclusionCheck.js"></script>
+
+    <!-- Import the instruction text -->
+    <script src="./Instructions/Text.js"></script>
+
+    <!-- Show the warning if needed  -->
+    <script src="./ShowWarning.js"></script>
+
+    <script>
+        async function OnBodyLoad() {
+            if (!TaskId) {
+                document.getElementById('TextArea').innerHTML =
+                    '<p>This page is for testing purposes only.</p>' +
+                    '<p>If you are reading this and you are not Sophie or Sam, ' +
+                    'something is horribly wrong. &#128516</p>';
+            } else if (TaskId === 'TItrain') {
+                document.getElementById('TextArea').innerHTML = TItrain;
+                document.getElementById('Audio').src =
+                    './Instructions/TItrain.mp3';
+            } else if (TaskId === 'TIprobe') {
+                document.getElementById('TextArea').innerHTML = TIprobe;
+                document.getElementById('Audio').src =
+                    './Instructions/TIprobe.mp3';
+            } else {
+                document.getElementById('TextArea').innerHTML =
+                    '<p>An error has occurred.</p>' +
+                    '<p>Please contact the experimenter.</p>';
+            }
+            document.getElementById('Canvas').style.visibility = 'visible';
+        }
+
+        async function LogInstruct() {
+            var Data2Send = {
+                SubjectId: SubjectId,
+                DateTime_Start: DateTime_Start,
+                ClientTimeZone: ClientTimeZone,
+                TaskId: TaskId
+            };
+            var P1 = await fetch('./InstructActions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Data2Send)
+            });
+            var Result = await P1.json();
+            if (Result.Error) {
+                var ErrorCode = '#XXX';
+                var URL = "./Error.html?SubjectId=" +
+                    encodeURIComponent(String(SubjectId)) +
+                    '&ErrorCode=' +
+                    encodeURIComponent(String(ErrorCode)) +
+                    "#";
+                window.location.replace(URL);
+            }
+            return Result;
+        }
+
+        function OnStartAudio() {
+            SetDateTime();
+        }
+
+        function OnFinishAudio() {
+            document.getElementById('ButtonArea').innerHTML =
+                '<button onclick="Continue()">Continue</button>';
+        }
+
+        function Continue() {
+            LogInstruct().then(function (P1) {
+                TargetUrl = P1.TargetUrl;
+                if (window.location.href != TargetUrl) {
+                    window.location.replace(TargetUrl);
+                } else {
+                    location.reload();
+                }
+            }).catch(function (Err) {
+                var ErrorCode = '#XXX';
+                var URL = "./Error.html?SubjectId=" +
+                    encodeURIComponent(String(SubjectId)) +
+                    '&ErrorCode=' +
+                    encodeURIComponent(String(ErrorCode)) +
+                    "#";
+                window.location.replace(URL);
+            });
+        }
+    </script>
 </head>
 
 <body onload="OnBodyLoad()">
-
-<div id='Canvas' style='visibility:hidden;'>
-<center>
-<div id='AudioDiv'>
-<p><i>Please press play to hear the instructions read out through your speakers...</i></p> 
-<audio controls onplay="OnStartAudio()" onended="OnFinishAudio()" id="Audio" src="./Assets/oldTItrain.mp3" type="audio/wav"></audio>
-</div>
-</center>
-
-<div id="TextArea" style="max-width:800px; margin:0 auto"></div>
-<center><div id="ButtonArea"></div></center>
-</div>
-
+    <div id='Canvas' style='visibility:hidden;'>
+        <center>
+            <div id='AudioDiv'>
+                <p><i>Please press play to hear the instructions read out through your speakers...</i></p>
+                <audio 
+                    controls 
+                    onplay="OnStartAudio()" 
+                    onended="OnFinishAudio()" 
+                    id="Audio" 
+                    src="./Assets/oldTItrain.mp3" 
+                    type="audio/wav">
+                </audio>
+            </div>
+        </center>
+        <div id="TextArea" style="max-width:800px; margin:0 auto"></div>
+        <center>
+            <div id="ButtonArea"></div>
+        </center>
+    </div>
 </body>
 </html>
