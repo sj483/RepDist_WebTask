@@ -1,134 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<title>Info & consent form</title>
+    <title>Info & consent form</title>
 
- <!-- Load a specific style-sheet for the consent form -->
-<link rel="stylesheet" href="./Assets/ConsentStyles.css">
+    <!-- Exclusion check -->
+    <script src="./Assets/ExclusionCheck.js"></script>
 
-<!-- Load the favicon -->
-<link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
+    <!-- Get participant IDs passed in from URL -->
+    <script src="./Assets/GetPpantIds.js"></script>
 
-<!-- Set some global styles -->
-<style>
-*{
-    font-family: Verdana, Geneva, sans-serif;
-    line-Height: 150%;
-}
-</style>
+    <!-- Load the favicon -->
+    <link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
 
-<!-- Exclusion check -->
-<script src="./ExclusionCheck.js"></script>
+    <!-- Load a specific style-sheet for the consent form -->
+    <link rel="stylesheet" href="./Assets/ConsentStyles.css">
+    <style>
+        * {
+            font-family: Verdana, Geneva, sans-serif;
+            line-Height: 150%;
+        }
 
-<!-- Get participant IDs passed in from URL -->
-<script src="./GetPpantIds.js"></script>
+        h3 {
+            margin-bottom: 0.2em;
+        }
 
-<!-- Define a JavaScript function to automatically populate SubjetcId in a hidden field -->
-<script>
-function OnBodyLoad() {document.getElementById("SubjectId").value = SubjectId;}
+        h3+p {
+            margin-top: 0;
+        }
+    </style>
 
-
-
-</script>
+    <!-- Automatically populate a hidden field with the SubjectId -->
+    <script>
+        function OnBodyLoad() {
+            document.getElementById("SubjectId").value = SubjectId;
+            return;
+        }
+    </script>
 </head>
 
 <body onload="OnBodyLoad()">
+    <div id="container" class="yorkblue"> <!-- Begin page content-->
 
-<div id="container" class="yorkblue"><!-- Begin page content-->
+        <div id="banner"> <!-- Begin top banner -->
+            <header id="header">
+                <img src="./Assets/SussexLogo.png" alt="Sussex Logo" 
+                    title="Sussex Logo" width="200" height="80">
+            </header>
+        </div> <!--End top banner-->
 
-<div id="banner"><!-- Begin top banner -->
-<header id ="header">
-<img src="./Assets/sussex-2.png" alt="" title="" width="200" height="80">
-</header>
-</div><!--End top banner-->
+        <div class="w3-container"><!-- Begin text container -->
 
-<div class="w3-container"><!-- Begin text container -->
+            <div class="w3-center"><!-- Begin title -->
+                <h1>Representational distance and<br />
+                    the rate of structural learning</h1>
 
-<div class = "w3-center"><!-- Begin title -->
-<h1>Representational distance and the rate of structural learning <br /></h1>
-<font style="font-size:18px">Researchers: Sophie Johnson and Sam Berens</font><br/>
-<font style="font-size:18px">This project has been approved by the F-REC Science Engineering
-    and Medicine: Science, Engineering and Technology (reference: 337)</font>
-</div><!-- End of title -->
+                <p>
+                    <font style="font-size:20px">
+                        Researchers: Sophie Johnson, Holly Beattie<br />
+                        Ophelia Greener, Chloe Munden, Sam Berens
+                    </font>
+                </p>
 
-
-<div><!-- Begin main body -->
-
-<h2><center>Information & consent sheet</center></h2>
-
-<h3>Invitation to take part</h3>
-<p>You are invited to take part in a research study, which aims to further our understanding of why we can learn some pieces of information more quickly than others.  Please read the following information sheet carefully. You can save a copy of this page for your records by clicking on <a href="./InfoSheetConsentForm.pdf" target="_blank" download>this link</a>.</p>
-
-<p>The study is being conducted by student researcher Sophie Johnson (sj483@sussex.ac.uk), and project supervisor Dr Sam Berens (s.berens@sussex.ac.uk). They are based within the School of Psychology at the University of Sussex (UK) and are happy to be contacted if you have any questions.</p>
-
-<h3>Why have I been invited to take part and what will I do?</h3>
-<p>We are testing people between the ages of 18 and 40. You have been selected to take part because your user profile on Prolific.co/SONA indicates that you meet the inclusion criteria.
-<p>The experiment will involve a web-based trial-and-error task, which will take approximately 20 minutes to complete.</p>
-<p></p>
-
-<ul style="padding-left:20px;list-style-type:circle;"><!-- Start of list -->
-<li style="margin-bottom:10px;">On each trial, you will see two images presented side-by-side.</li>
-<li style="margin-bottom:10px;"> You will then have 4 seconds to choose which of the
-    images in this pair 'wins'. Once you have selected an answer you will receive feedback indicating whether you were correct. </li>
-<li style="margin-bottom:10px;">The winning image in each pair will be determined by a simple set of rules that
-    you will have to figure out using trial-and-error .</li>
-</ul><!-- End of list -->
-
-<h3>Are there any risks or benefits to taking part?</h3>
-<p>On completion of taking part you will receive either &pound;3.33 or 2 SONA credits(credits only applicable to Sussex University students, whichever you have requested). Apart from the modest compensation, there are no immediate benefits to you in taking part. There are no risks to taking part.</p>
-    
-
-<h3>What will happen to the results and my personal information?</h3>
-<p>The results of this research will be written into a scientific report for publication, and will be presented to other research scientists during academic conferences. We anticipate being able to provide a summary of our findings on request from 1st September 2026. Please contact Sophie Johnson (sj483@sussex.ac.uk) if you wish to receive a copy of this report.</p>
-
-<p>Your anonymity will be ensured in the way described in the consent form below. Please read this information carefully and then, if you wish to take part, please sign to show you have fully understood this information, and that you consent to take part in the study.</p>
-
-<hr /><!-- Horizontal separator -->
-
-<h3><center> Consent </center></h3>
-<p>Please read this information carefully. If you decide to take part, please tick the checkbox and type your initials in box below to show that you have fully understood all of the information provided, and that you wish to participate in the study.</p>
+                <p>
+                    <font style="font-size:18px">
+                        This project has been approved by the Science,
+                        Engineering and<br />Medicine Faculty Research 
+                        Ethics Committee (reference: 337)</font>
+                </p>
+            </div> <!-- End of title -->
 
 
-<ul style="padding-left:20px;list-style-type:circle;"><!-- Start of list -->
-<li style="margin-bottom:10px;">I understand that by signing below I am agreeing to take part in the University of Sussex research described here, and that I have read and understood this information sheet.</li>
+            <div> <!-- Begin main body -->
 
-<li style="margin-bottom:10px;">I understand that my participation is entirely voluntary, that I can choose not to participate in part or all of the study, and that I can withdraw at any stage without having to give a reason and without being penalised in any way (e.g., if I am a student, my decision whether or not to take part will not affect my grades).</li>
+                <h2>
+                    <center>Information Sheet</center>
+                </h2>
 
-<li style="margin-bottom:10px;">I understand I can request without penalty that my data be withdrawn and deleted even after the data collection is complete, any time up until the results are analysed (26th August 2026).</li>
+                <h3>
+                    Invitation to take part
+                </h3>
 
-<li style="margin-bottom:10px;">I understand that my collected data will be stored in a unidentifiable way (e.g. using ID numbers not names), and kept separate from other details about me (e.g. from the consent form). Electronic data will be stored securely on a University managed system,  and hard-copies will be stored behind a locked door.
- De-identified data may be made publically available through the <a href="https://osf.io/hjwzp/" target="_blank">OSF</a> and <a href="https://github.com/sj483" target="_blank" >github</a> online data repositories or at the request of other researchers.</li>
+                <p>You are invited to take part in a research study, which
+                    aims to further our understanding of why we can learn
+                    some pieces of information more quickly than others.
+                    Please read the following information sheet carefully.
+                    You can save a copy of this page for your records by
+                    clicking on <a href="./InfoSheetConsentForm.pdf" 
+                        target="_blank" download>this link</a>.</p>
+
+                <p>The study is being conducted by student researchers
+                    Sophie Johnson (sj483@sussex.ac.uk), Holly Beattie
+                    (hb518@sussex.ac.uk), Ophelia Greener
+                    (opug20@sussex.ac.uk), Chloe Munden
+                    (cm2028@sussex.ac.uk) and project supervisor Dr Sam
+                    Berens (s.berens@sussex.ac.uk). They are based within
+                    the School of Psychology at the University of Sussex
+                    (UK) and are happy to be contacted if you have any
+                    questions.</p>
+
+                <h3>
+                    Why have I been invited to take part and what will I do?
+                </h3>
+
+                <p>We are testing people between the ages of 18 and 40. You
+                    have been selected to take part because your user
+                    profile on Prolific/SONA indicates that you meet the
+                    inclusion criteria.</p>
+
+                <p>The experiment will involve a web-based trial-and-error
+                    learning task, which will take approximately 20 minutes
+                    to complete.</p>
+
+                <ul style="padding-left:20px;list-style-type:circle;">
+                    <li style="margin-bottom:10px;">
+                        On each trial, you will see two images presented 
+                        side-by-side.</li>
+                    <li style="margin-bottom:10px;">
+                        You will then have 4 seconds to choose which of the
+                        images in this pair 'wins'. Once you have selected 
+                        an answer you will receive feedback indicating 
+                        whether you were correct.</li>
+                    <li style="margin-bottom:10px;">
+                        The winning image in each pair will be determined by
+                         a simple set of rules that you will have to figure 
+                         out using trial-and-error.</li>
+                </ul>
+
+                <h3>
+                    Are there any risks or benefits to taking part?
+                </h3>
+
+                <p>There are no risks to taking part in this study. On 
+                    completion, you will receive either &pound;3.33 
+                    (if you were recruited via Prolific) or 2 SONA credits 
+                    (only applicable to students at the University of 
+                    Sussex). Apart from this modest compensation, there are 
+                    no immediate benefits to taking part.</p>
 
 
+                <h3>
+                    What will happen to the results and my personal 
+                    information?
+                </h3>
 
+                <p>The results of this research will be written into a 
+                    scientific report for publication, and will be presented
+                    to other research scientists during academic 
+                    conferences. We anticipate being able to provide a 
+                    summary of our findings on request from 1st September 
+                    2026. Please contact Sophie Johnson (sj483@sussex.ac.uk)
+                    if you wish to receive a copy of this report.</p>
 
-</ul><!-- End of list -->
+                <p>Your anonymity will be ensured in the way described in 
+                    the consent form below. Please read this information 
+                    carefully and then, if you wish to take part, please 
+                    sign to show you have fully understood this information,
+                    and that you consent to take part in the study.</p>
 
-<hr /><!-- Horizontal separator -->
+                <hr /> <!-- Horizontal separator -->
 
-</div><!-- End main body -->
-</div><!-- End text container -->
+                <h2>
+                    <center>Consent Form</center>
+                </h2>
+                <p>Please read this information carefully. If you decide to 
+                    take part, please tick the checkbox (below) and type
+                    your initials in text box to declare that you have fully
+                    understood all of the information provided, and that you
+                    wish to participate in the study.</p>
 
-<!-- Begin the form -->
-<div><form action="./ConsentAction.php" method="post">
+                <ul style="padding-left:20px;list-style-type:circle;">
+                    <li style="margin-bottom:10px;">I understand that by 
+                        signing below I am agreeing to take part in the
+                        University of Sussex research project described 
+                        here, and that I have read and understood this
+                        information sheet.</li>
 
-<input type="hidden" id="SubjectId" name="SubjectId" value="null">
+                    <li style="margin-bottom:10px;">I understand that my 
+                        participation is entirely voluntary, that I can 
+                        choose not to participate in part or all of the 
+                        study. I understand that I can withdraw at any stage
+                        without having to give a reason and without being 
+                        penalised in any way (e.g., if I am a student, my 
+                        decision whether or not to take part will not affect
+                        my grades).</li>
 
-<p>
-By ticking the following checkbox and typing my initials below, I understand that I am agreeing to take part in this research project, and that I have read and understood the information provided: <font style="color:red;">*</font>
-<input style="display:inline" type="checkbox" name="checkbox" value="check" required>
-</p>
+                    <li style="margin-bottom:10px;">I understand I can 
+                        request without penalty that my data be withdrawn 
+                        and deleted even after the data collection is 
+                        complete, any time up until the results are analysed
+                        (26th August 2026).</li>
 
-<center>
-<b>Your initials</b>: <font style="color:red;">*</font>
-<input id="Initials" name="Initials" value="" size="6" required></p>
+                    <li style="margin-bottom:10px;">I understand that my 
+                        collected data will be stored in an unidentifiable 
+                        way (e.g. using ID numbers not names), and kept 
+                        separate from other details about me (e.g. from the 
+                        completed Consent Form). Electronic data will be 
+                        stored securely on a University managed system, and 
+                        hard-copies will be stored behind a locked door.
+                        De-identified data may be made publicly available 
+                        through the <a href="https://osf.io/" 
+                        target="_blank">Open Science Framework</a> and 
+                        <a href="https://github.com/" target="_blank">GitHub
+                        </a>online data repositories or at the request of 
+                        other researchers.</li>
+                </ul>
 
-<input type="submit" name="Submit" value="Submit">
-</center>
-</form></div>
-<!-- End of form -->
+                <hr /> <!-- Horizontal separator -->
 
+            </div> <!-- End main body -->
+        </div> <!-- End text container -->
 
-</div><!-- End page content -->
+        <!-- Begin the form -->
+        <div>
+            <form action="./ConsentAction.php" method="post">
+
+                <input type="hidden" id="SubjectId" name="SubjectId" 
+                    value="null">
+
+                <p>
+                    By ticking the following checkbox and typing my initials
+                    below, I understand that I am agreeing to take part in 
+                    this research project, and that I have read and 
+                    understood the information provided:
+                    <font style="color:red;">*</font>
+                    <input style="display:inline" type="checkbox" 
+                        name="checkbox" value="check" required>
+                </p>
+
+                <center>
+                    <u><i>Your initials</u></i>:
+                    <font style="color:red;">*</font>
+                    <input id="Initials" name="Initials" value="" size="6" 
+                        required>
+                    <br /><br />
+                    <input type="submit" name="Submit" value="Submit">
+                </center>
+            </form>
+        </div>
+        <!-- End of form -->
+
+    </div> <!-- End page content -->
 </body>
 </html>
