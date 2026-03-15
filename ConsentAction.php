@@ -1,49 +1,44 @@
 <?php
 require __DIR__ . '/GetTargetUrl.php';
 require __DIR__ . '/Credentials.php';
-require __DIR__ . '/Encrypt_details.php';
 
-// so the reason we're using this instead of a window.location.. method inside the html 
-//is because the built in form methods dont facilliatate you to recieve a result of the
-//post you sent out 
-function RedirectToUrl($Url) {
-    header('Location: '.$Url);
-    exit();
+// Check that the Checkbox has been checked and return if not
+if (!isset($_POST['Checkbox']) || ($_POST['Checkbox'] != 'Check')) {
+    die('Consent not granted.');
 }
-// Preallocate the result (which will contain the direction):
-$Result = array();
 
-// Connect to the database:
+// Connect to the database
 $Conn = new mysqli($Servername, $Username, $Password, $Dbname);
 if ($Conn->connect_error) {
-	die("Database connection failed: " . $Conn->connect_error);
+    die("Database connection failed: " . $Conn->connect_error);
 }
 
-if (isset($_POST['checkbox']) && $_POST['checkbox'] =='check') {
-	// Get SubjectId and Initials:
-    $SubjectId = $_POST['SubjectId'];
-    $Initials = $_POST['Initials'];   
-    $SubjectId = mysqli_real_escape_string($Conn,$SubjectId);
-    $Initials = mysqli_real_escape_string($Conn,$Initials);
-    $Initials = openssl_encrypt($Initials, $EncrypMethod, $Hash, false, $IV);
-    $Now = new DateTimeImmutable("now", new DateTimeZone('Europe/London'));
-    $DateTime_Consent = $Now->format('Y-m-d\TH:i:s');
-    
-    // Update Register:
-    $Sql0 = "UPDATE Register SET State = 1, DateTime_Consent = '$DateTime_Consent' WHERE SubjectId = '$SubjectId'";
-    if ($Conn->query($Sql0) == false) {
-        die("Query Sql0 failed to execute successfully!");
-    }
-	
-	// Add to ConsentLog:
-	$Sql1 = "CALL RecordConsentLog('$SubjectId', '$DateTime_Consent', '$Initials')";
-	if ($Conn->query($Sql1) === true) {
-		// Redirect:
-		$Url = GetTargetUrl($Conn, $SubjectId);
-		$Conn->close();
-        RedirectToUrl($Url);
-	} else {
-	    $Conn->close();
-		die("Query Sql1 failed to execute successfully!");
-	}
+// Unpack the inputs
+$SubjectId = $_POST['SubjectId'];
+$Initials = $_POST['Initials'];
+$SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
+$Initials = mysqli_real_escape_string($Conn, $Initials);
+$Now = new DateTimeImmutable("now", new DateTimeZone('Europe/London'));
+$DateTime_Consent = $Now->format('Y-m-d\TH:i:s');
+
+// Update the Register table
+$Sql00 = "UPDATE Register SET 
+    State = 1, DateTime_Consent = '$DateTime_Consent' 
+    WHERE SubjectId = '$SubjectId'";
+if ($Conn->query($Sql00) == false) {
+    die("Query Sql0 failed to execute successfully!");
 }
+
+// Add to the ConsentLog table
+$Sql01 = "CALL RecordConsentLog(
+    '$SubjectId', '$DateTime_Consent', '$Initials')";
+if ($Conn->query($Sql01) == false) {
+    $Conn->close();
+    die("Query Sql1 failed to execute successfully!");
+}
+
+// Close the database connection and redirect
+$Url = GetTargetUrl($Conn, $SubjectId);
+$Conn->close();
+header('Location: ' . $Url);
+exit();

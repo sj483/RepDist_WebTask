@@ -1,8 +1,5 @@
 Credentials.php
-/Imgs/*.png
-/Trash
-/IP.js
-/Encrypt_details.php
 /Imgs
-/ProlificCompletion.php
-/reCaptchaCredentials.php
+/Trash
+/CompletionLinks.php
+/ReCaptchaStuff.php
