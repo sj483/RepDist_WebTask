@@ -1,17 +1,16 @@
 <?php
-require __DIR__ . '/reCaptchaCredentials.php';
+require __DIR__ . '/ReCaptchaCreds.php';
 
-$input = json_decode(file_get_contents('php://input'), true);
-$token = $input['recaptchaToken'] ?? '';
+$Input = json_decode(file_get_contents('php://input'), true);
+$Token = $Input['recaptchaToken'] ?? '';
 
-$response = file_get_contents(
-    "https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$token"
-);
-$result = json_decode($response, true);
+$Response = file_get_contents(
+    "https://www.google.com/recaptcha/api/siteverify?" .
+        "secret=$SecretKey&response=$Token");
+$Result = json_decode($Response, true);
 
 echo json_encode([
-    'success' => $result['success'] ?? false,
-    'score' => $result['score'] ?? 0,
-    'error-codes' => $result['error-codes'] ?? []
+    'success' => $Result['success'] ?? false,
+    'score' => $Result['score'] ?? 0,
+    'error-codes' => $Result['error-codes'] ?? []
 ]);
-?>
