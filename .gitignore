@@ -1,5 +1,5 @@
 Credentials.php
-/Imgs
-/Trash
-/CompletionLinks.php
-/ReCaptchaCreds.php
+CompletionLinks.php
+ReCaptchaCreds.php
+Imgs
+Trash
