@@ -73,9 +73,13 @@
                 document.getElementById('Audio').src =
                     './Instructions/TIprobe.mp3';
             } else {
-                document.getElementById('TextArea').innerHTML =
-                    '<p>An error has occurred.</p>' +
-                    '<p>Please contact the experimenter.</p>';
+                var ErrorCode = 'XXX';
+                var URL = "./Error.html?SubjectId=" +
+                    encodeURIComponent(String(SubjectId)) +
+                    '&ErrorCode=' +
+                    encodeURIComponent(String(ErrorCode)) +
+                    "#";
+                window.location.replace(URL);
             }
             document.getElementById('Canvas').style.visibility = 'visible';
         }
@@ -96,7 +100,7 @@
             });
             var Result = await P1.json();
             if (Result.Error) {
-                var ErrorCode = '#XXX';
+                var ErrorCode = 'XXX';
                 var URL = "./Error.html?SubjectId=" +
                     encodeURIComponent(String(SubjectId)) +
                     '&ErrorCode=' +
@@ -125,7 +129,7 @@
                     location.reload();
                 }
             }).catch(function (Err) {
-                var ErrorCode = '#XXX';
+                var ErrorCode = 'XXX';
                 var URL = "./Error.html?SubjectId=" +
                     encodeURIComponent(String(SubjectId)) +
                     '&ErrorCode=' +

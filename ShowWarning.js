@@ -1,7 +1,7 @@
 function WarningNeeded() {
-    const URL = new URL(window.location.href);
+    const Location = new URL(window.location.href);
 	var ToWarn = false;
-    const WarnVal = URL.searchParams.get("Warn");
+    const WarnVal = Location.searchParams.get("Warn");
 	if (WarnVal == "true") {
 		ToWarn = true;
     }
