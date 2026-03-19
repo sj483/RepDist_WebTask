@@ -124,7 +124,11 @@ async function WriteTaskIO() {
     var Data = {};
     Data.SubjectId = SubjectId;
     Data.ClientTimeZone = ClientTimeZone;
-    Data.TItrainIO = JSON.stringify(TaskIO);
+    if (window.location.href.includes("TIprobe")) {
+        Data.TIprobeIO = JSON.stringify(TaskIO);
+    } else {
+        Data.TItrainIO = JSON.stringify(TaskIO);
+    }
     var P1 = await fetch('./WriteXIO.php', {
         method: 'post',
         headers: {
@@ -142,9 +146,6 @@ async function OnFinishTask() {
         var Result = await WriteTaskIO();
         window.location.replace(Result.TargetUrl);
     } catch (Err) {
-        alert(`An error has occurred.\n
-            Please report error code #XXX to the experimenter:\n` +
-            Err);
         window.location.replace(
             "./Error.html?SubjectId=" + SubjectId + '&ErrorCode=XXX#');
     }

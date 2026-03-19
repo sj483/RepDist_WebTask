@@ -13,7 +13,6 @@ CREATE TABLE `c01_DataStore`.`Register` (
     `DateTime_Register` DATETIME NULL DEFAULT NULL,
     `DateTime_TIinstr` DATETIME NULL DEFAULT NULL,
     `DateTime_TItrain` DATETIME NULL DEFAULT NULL,
-    `DateTime_TIprobe` DATETIME NULL DEFAULT NULL,
-    `DateTime_Complete` DATETIME NULL DEFAULT NULL,
+    `DateTime_TIprobe` DATETIME NULL DEFAULT NULL
     PRIMARY KEY (`SubjectId`(8))
 ) ENGINE = InnoDB;
