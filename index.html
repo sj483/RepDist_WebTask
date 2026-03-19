@@ -61,7 +61,7 @@
                 PpantIds.PoolId = PoolId;
                 PpantIds.SubjectId = SubjectId;
             } else {
-                HandleError("#000");
+                HandleError("000");
                 return null;
             }
 
@@ -112,7 +112,7 @@
                     (Input.length === 5 && /^[0-9]+$/.test(Input))
                 ) {
                     PoolId = Input;
-                    ErrorCode = "#001";
+                    ErrorCode = "001";
                     await GenLogAndRedirect(ErrorCode);
                     return;
                 }
@@ -120,7 +120,7 @@
                 if (Input.length === 8) {
                     SubjectId = Input;
                     PoolId = null;
-                    ErrorCode = "#002";
+                    ErrorCode = "002";
                     await LogAndRedirect(ErrorCode);
                     return;
                 }
@@ -136,7 +136,7 @@
         // --- Execute functions ---
         var GetUserInput = false;
         async function Init() {
-            var ErrorCode = "#004";
+            var ErrorCode = "004";
 
             if ((!PoolId) && (!SubjectId)) {
                 // Get user input
@@ -147,10 +147,10 @@
             try {
                 // No user input required; call and redirect.
                 if (!PoolId && Boolean(SubjectId)) {
-                    ErrorCode = "#003";
+                    ErrorCode = "003";
                     await LogAndRedirect(ErrorCode);
                 } else {
-                    ErrorCode = "#004";
+                    ErrorCode = "004";
                     await GenLogAndRedirect(ErrorCode);
                 }
             } catch (Err) {

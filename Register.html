@@ -52,33 +52,17 @@ async function SubmitForm() {
 
     // Register
     var Result = await PostJson('./RegisterActions.php', Data2Send);
-    
-    
-    
-     if (Result2) {
-         window.location.replace(Result1.TargetUrl);
-         //REMOVE THE FOLLOWING LINE AFTER TESTING AND MIGRATION TO PROPER C01 DOMAIN...
+     if (Boolean(Result)) {
+         window.location.replace(Result.TargetUrl);
      } else {
-       // alert('Registration: ' + Result1.Error +Result1.TargetUrl );
-        window.location.replace(Result1.TargetUrl);
+        var ErrorCode = 'XXX';
+        var Url = "./Error.html?SubjectId=" +
+            encodeURIComponent(String(SubjectId)) + 
+            '&ErrorCode=' + ErrorCode + "#";
+        window.location.replace(Url);
    }
-   //...AND REINSTATE THESE :
-   //else {
-     //   const params = new URLSearchParams(window.location.search);
-       // var SubjectId = params.get("SubjectId");
-       // window.location.replace('./Error.html?Error=RecaptchaFailed&SubjectId='+ SubjectId);
-    //}
 };
-
 </script>
-<script>
-// script to make sure birth month/year input doesnt accept empty input on submition  
-    window.addEventListener('load', () => {
-      const bmy = document.getElementById('Input_BMY');
-      bmy.focus();
-      bmy.blur();
-    });
-  </script>
 </head>
 
 <body>
@@ -187,7 +171,7 @@ async function SubmitForm() {
         </td>
     </tr>
     <tr>
-        <th>What month and year <br>were you born in?<font style='color:red;'>*</font></th>
+        <th>What year and month <br>were you born in? (e.g.: 2001-12)<font style='color:red;'>*</font></th>
         <td>
             <input type="month" name="BMY" id="Input_BMY" required pattern="\d{4}-\d{2}">
         </td>
@@ -208,4 +192,4 @@ async function SubmitForm() {
 </p>
 
 </body>
-</html>verifying
+</html>

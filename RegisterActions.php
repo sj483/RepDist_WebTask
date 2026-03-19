@@ -13,7 +13,7 @@ if ($Conn->connect_error) {
 $Input = json_decode(file_get_contents('php://input'), true);
 
 // SubjectId
-$SubjectId = $Inputs['SubjectId'];
+$SubjectId = $Input['SubjectId'];
 $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
 
 // Gender
