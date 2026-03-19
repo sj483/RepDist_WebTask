@@ -15,11 +15,11 @@ if ($Conn->connect_error) {
 $Input = json_decode(file_get_contents('php://input'), true);
 
 // SubjectId
-$SubjectId = $Inputs['SubjectId'];
+$SubjectId = $Input['SubjectId'];
 $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
 
 // DateTime_Start
-$DateTime_Start = FormatDateTimeStr($Inputs['DateTime_Start']);
+$DateTime_Start = FormatDateTimeStr($Input['DateTime_Start']);
 $StartTime = new DateTimeImmutable(
     $DateTime_Start,
     new DateTimeZone('Europe/London')
@@ -33,11 +33,11 @@ $DateTime_Instruct = $Now->format('Y-m-d\TH:i:s');
 $Interval = GetTimeInterval($StartTime, $Now);
 
 // ClientTimeZone
-$ClientTimeZone = $Inputs['ClientTimeZone'];
+$ClientTimeZone = $Input['ClientTimeZone'];
 $ClientTimeZone = mysqli_real_escape_string($Conn, $ClientTimeZone);
 
 // TaskId
-$TaskId = $Inputs['TaskId'];
+$TaskId = $Input['TaskId'];
 $TaskId = mysqli_real_escape_string($Conn, $TaskId);
 
 // Test to see if enough time has passed
