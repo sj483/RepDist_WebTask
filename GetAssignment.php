@@ -33,7 +33,10 @@ if ($QueryRes00 === false) {
     while ($Row = mysqli_fetch_assoc($QueryRes00)) {
         $SubjectFound = true;
         $GroupId = $Row["GroupId"];
-        $ImgPerm = $Row["ImgPerm"];
+        $ImgPerm = json_decode($Row["ImgPerm"], true);
+        $Assignment = array();
+        $Assignment["GroupId"] = $GroupId;
+        $Assignment["ImgPerm"] = $ImgPerm;
     }
 }
 

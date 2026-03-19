@@ -18,7 +18,7 @@ switch ($Signature) {
 		$DataType = 'TItrainIO';
 		break;
 	case 2:
-		$DataType = 'TItrainIO';
+		$DataType = 'TIprobeIO';
 		break;
 	default:
 		die('WriteXIO.php invoked with bad inputs.');
