@@ -31,13 +31,13 @@ function GetTargetUrl($Conn, $SubjectId)
 			return "./Register.html?SubjectId=$SubjectId#";
 
 		case 2:
-			return "./Instruct.html?SubjectId=$SubjectId&Task=TItrain#";
+			return "./Instruct.html?SubjectId=$SubjectId&TaskId=TItrain#";
 
 		case 3:
 			return "./TItrain.html?SubjectId=$SubjectId#";
 
 		case 4:
-			return "./Instruct.html?SubjectId=$SubjectId&Task=TIprobe#";
+			return "./Instruct.html?SubjectId=$SubjectId&TaskId=TIprobe#";
 
 		case 5:
 			return "./TIprobe.html?SubjectId=$SubjectId#";
