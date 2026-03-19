@@ -44,7 +44,7 @@ $TaskId = mysqli_real_escape_string($Conn, $TaskId);
 $EnoughTime = false;
 switch ($TaskId) {
     case 'TItrain':
-        if ($Interval > 86) {
+        if ($Interval > 84) {
             $EnoughTime = true;
         }
         break;

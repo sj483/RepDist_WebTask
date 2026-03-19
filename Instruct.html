@@ -59,6 +59,7 @@
 
     <script>
         async function OnBodyLoad() {
+            ShowWarningIfNeeded();
             if (!TaskId) {
                 document.getElementById('TextArea').innerHTML =
                     '<p>This page is for testing purposes only.</p>' +
