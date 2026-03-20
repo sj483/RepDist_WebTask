@@ -68,12 +68,13 @@
                     "<p>This means that we will not be able to use your data &#128546;.</p>" +
                     "<p>Your participation has been discontinued.</p>";
             }
+            return Reason;
         }
 
         function OnBodyLoad() {
             if (SubjectId) {
-                GetReason().then(function(P1) {
-                    var iHTML = P1.Reason;
+                GetReason().then(function(Reason) {
+                    var iHTML = Reason;
                     document.getElementById('Message').innerHTML = iHTML;
                     document.getElementById('Message').style =
                         "max-width:700px;visibility:visible;";
