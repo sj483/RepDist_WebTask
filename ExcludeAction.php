@@ -3,12 +3,10 @@ header('Content-Type: application/json');
 require __DIR__ . '/GetTargetUrl.php';
 require __DIR__ . '/Credentials.php';
 
-
 // Preallocate the result (which will contain the direction):
 $Result = array();
 
-
-//unpack the input
+// Get the input
 $Input = json_decode(file_get_contents('php://input'), true);
 // Check inputs
 if (!isset($Input['FunctionCall']) ) {
