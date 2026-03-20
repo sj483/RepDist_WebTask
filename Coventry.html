@@ -73,7 +73,7 @@
         function OnBodyLoad() {
             if (SubjectId) {
                 GetReason().then(function(P1) {
-                    var iHTML = P1.HTML;
+                    var iHTML = P1.Reason;
                     document.getElementById('Message').innerHTML = iHTML;
                     document.getElementById('Message').style =
                         "max-width:700px;visibility:visible;";
