@@ -41,7 +41,7 @@ async function GetTimelineVars(Pairs) {
     var UnshuffledOrder;
     var Timeline = [];
     if (Pairs.length == 5) {
-        nReps = 1; //////////////////////////////////////////// 25 reps????
+        nReps = 25;
         UnshuffledOrder = [0, 1, 2, 3, 4];
     } else {
         nReps = 2;
