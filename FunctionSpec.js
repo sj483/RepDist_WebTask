@@ -50,7 +50,7 @@ async function GetTimelineVars(Pairs) {
     for (iRep = 0; iRep < nReps; iRep++) { 
             var Order = UnshuffledOrder;
             Shuffle(Order);
-            for (iOrder = 0; iOrder < 5; iOrder++) {
+            for (iOrder = 0; iOrder < Order.length; iOrder++) {
                 var cPairId = Pairs[Order[iOrder]].PairId;
                 var cPos = './Imgs/' + Pairs[Order[iOrder]].Pos + '.png';
                 var cNeg = './Imgs/' + Pairs[Order[iOrder]].Neg + '.png';

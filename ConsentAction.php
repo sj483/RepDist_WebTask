@@ -31,7 +31,7 @@ if ($Conn->query($Sql00) == false) {
 
 // Add to the ConsentLog table
 $Sql01 = "CALL RecordConsentLog(
-    '$SubjectId', '$DateTime_Consent', '$Initials')";
+    '$SubjectId', '$Initials', '$DateTime_Consent')";
 if ($Conn->query($Sql01) == false) {
     $Conn->close();
     die("Query Sql1 failed to execute successfully!");
