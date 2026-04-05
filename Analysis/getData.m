@@ -1,13 +1,13 @@
-function [WebData] =  getData()
+function [Data] =  getData()
 
-WebData = webread('https://c01.learningandinference.org/GetData.php');
-WebData = struct2table(WebData);
+Data = webread('https://c01.learningandinference.org/GetData.php');
+Data = struct2table(Data);
 
 %% 1. SubjectId
-WebData.SubjectId = categorical(WebData.SubjectId);
+Data.SubjectId = categorical(Data.SubjectId);
 
 %% 2. Birth month+year
-WebData.BMY = datetime(WebData.BMY,...
+Data.BMY = datetime(Data.BMY,...
     'InputFormat','yyyy-MM',...
     'TimeZone','Europe/London') ...
     + duration(30.44*24/2,0,0);
@@ -15,60 +15,60 @@ WebData.BMY = datetime(WebData.BMY,...
 % expected error.
 
 %% 3. Gender
-female = cellfun(@(s)strcmpi(s(1),'f'),WebData.Gender);
-male = cellfun(@(s)strcmpi(s(1),'m'),WebData.Gender);
+female = cellfun(@(s)strcmpi(s(1),'f'),Data.Gender);
+male = cellfun(@(s)strcmpi(s(1),'m'),Data.Gender);
 nonbinary = ~(male|female);
-WebData.Gender = categorical(...
+Data.Gender = categorical(...
     cellstr(char([female,male,nonbinary]*double('fmn')')));
 
 %% 4. Handedness
-WebData.Handedness = categorical(WebData.Handedness);
+Data.Handedness = categorical(Data.Handedness);
 
 %% 5. L1
-WebData.L1 = categorical(WebData.L1);
+Data.L1 = categorical(Data.L1);
 
 %% 6. State
-WebData.State = cellfun(@(s)str2double(s),WebData.State);
+Data.State = cellfun(@(s)str2double(s),Data.State);
 
 %% 7. GroupId
-WebData.GroupId = categorical(WebData.GroupId);
+Data.GroupId = categorical(Data.GroupId);
 
 %% 8-13. ImgPerm
-ImgPerm = struct2table(cellfun(@jsondecode,WebData.ImgPerm));
+ImgPerm = struct2table(cellfun(@jsondecode,Data.ImgPerm));
 for c = cellfun(@(d){char(d)},num2cell((0:5)+double('A')))
     ImgPerm.(c{1}) = categorical(ImgPerm.(c{1}));
 end
-WebData = [WebData(:,1:7),ImgPerm,WebData(:,9:end)];
+Data = [Data(:,1:7),ImgPerm,Data(:,9:end)];
 
 %% 14-19. DateTime_*
-varNames = WebData.Properties.VariableNames;
+varNames = Data.Properties.VariableNames;
 for ii = 14:19
     s = varNames{ii};
-    WebData.(s) = datetime(WebData.(s),'TimeZone','Europe/London');
+    Data.(s) = datetime(Data.(s),'TimeZone','Europe/London');
 end
 
 %% 20. ClientTimeZone
-WebData.ClientTimeZone = categorical(WebData.ClientTimeZone);
+Data.ClientTimeZone = categorical(Data.ClientTimeZone);
 
 %% 21-23. TItrainIO
-TItrainIO = cellfun(@decodeTaskIO,WebData.TItrainIO);
+TItrainIO = cellfun(@decodeTaskIO,Data.TItrainIO);
 TItrainIO = struct2table(TItrainIO);
 TItrainIO.Properties.VariableNames{1} = 'DateTime_StartTItrain';
 TItrainIO.Properties.VariableNames{2} = 'TItrainIO';
-TItrainIO.Duration_TItrain = WebData.DateTime_TItrain - ...
+TItrainIO.Duration_TItrain = Data.DateTime_TItrain - ...
     TItrainIO.DateTime_StartTItrain;
 TItrainIO = [TItrainIO(:,1),TItrainIO(:,3),TItrainIO(:,2)];
-WebData = [WebData(:,1:20),TItrainIO,WebData(:,22:end)];
+Data = [Data(:,1:20),TItrainIO,Data(:,22:end)];
 
 %% 24-25. TIprobeIO
-TIprobeIO = cellfun(@decodeTaskIO,WebData.TIprobeIO);
+TIprobeIO = cellfun(@decodeTaskIO,Data.TIprobeIO);
 TIprobeIO = struct2table(TIprobeIO);
 TIprobeIO.Properties.VariableNames{1} = 'DateTime_StartTIprobe';
 TIprobeIO.Properties.VariableNames{2} = 'TIprobeIO';
-TIprobeIO.Duration_TIprobe = WebData.DateTime_TIprobe - ...
+TIprobeIO.Duration_TIprobe = Data.DateTime_TIprobe - ...
     TIprobeIO.DateTime_StartTIprobe;
 TIprobeIO = [TIprobeIO(:,1),TIprobeIO(:,3),TIprobeIO(:,2)];
-WebData = [WebData(:,1:23),TIprobeIO];
+Data = [Data(:,1:23),TIprobeIO];
 return
 
 function [out] = decodeTaskIO(in)
