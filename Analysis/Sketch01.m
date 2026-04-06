@@ -12,19 +12,20 @@ C = [pairId==0,...              A
 Trials = struct;
 x = zeros(6,1);
 Sigma = eye(6);
-beta0 = 2/3; % Decision noise (sd)
-beta1 = 1/3; % Feedback noise (sd)
+beta0 = 2/3; % Decision noise (sd) [0,Inf]
+beta1 = 1/3; % Feedback noise (sd) [0,Inf]
 lambda = 0.1; % Lapse [0,1]
-alpha = 0; % Reduced updating for losers [0,1]
-gamma = 6; % Attentional gate [1,Inf]
-q = 0.05; % Forgetting
-asymmetry = @(x) min(x,0)*0.5 - min(-x,0);
+gamma = 0.5; % Asymmetric updating for losers [0,Inf]
+mu = 0.4; % Attentional gate mean [0,1]
+kappa = 6; % Attentional gate concentration [0,Inf]
+q = 0.05; % Diffusion/Forgetting [0,1]
+asymmetry = @(x) min(x,0)*gamma - min(-x,0);
 for iTrial = 1:size(C,1)
     
     c = C(iTrial,:)';
-    d = c'*x; % Decision variable
+    d = c'*x; % Decision margin
     u = c'*Sigma*c; % Decision uncertainty (var)
-    a = betarnd(1,gamma,1);
+    a = betarnd(mu*kappa,(1-mu)*kappa,1);
     
     %% Decision
     v = u + (beta0^2); % Decision uncertainty + decision noise (var)
@@ -35,7 +36,7 @@ for iTrial = 1:size(C,1)
     r = d/sqrt(s);
     w_x = normpdf(r)/normcdf(r);
     w_Sigma = w_x*(w_x+r);
-    x = x + a * w_x * ((Sigma*c)/sqrt(s));
+    x = x + a * asymmetry(w_x * ((Sigma*c)/sqrt(s)));
     Sigma = Sigma - a * w_Sigma * (Sigma*(c*c')*Sigma)/s + q*eye(6);
     
     %% Save
