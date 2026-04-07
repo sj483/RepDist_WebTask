@@ -16,10 +16,10 @@ beta0 = 2/3; % Decision noise (sd) [0,Inf]
 beta1 = 1/3; % Feedback noise (sd) [0,Inf]
 lambda = 0.1; % Lapse [0,1]
 gamma = 0.5; % Asymmetric updating for losers [0,Inf]
-mu = 0.4; % Attentional gate mean [0,1]
-kappa = 6; % Attentional gate concentration [0,Inf]
+mu = 0.1; % Attentional gate mean [0,1]
+kappa = 4; % Attentional gate concentration [0,Inf]
 q = 0.05; % Diffusion/Forgetting [0,1]
-psi = 100;
+psi = 50;
 omega  = 1;
 asymmetry = @(x) min(x,0)*gamma - min(-x,0);
 for iTrial = 1:size(C,1)
@@ -28,9 +28,10 @@ for iTrial = 1:size(C,1)
     
     g = tanh(omega*(log(exp(iTrial-psi-1)+1)));
     mask = (1-g).*diag(abs(c)) + g.*eye(6);
+    SigmaStar = mask*Sigma*mask;
     
     d = c'*x; % Decision margin
-    u = c'*mask*Sigma*mask*c; % Decision uncertainty (var)
+    u = c'*SigmaStar*c; % Decision uncertainty (var)
     a = betarnd(mu*kappa,(1-mu)*kappa,1);
     
     %% Decision
@@ -42,8 +43,8 @@ for iTrial = 1:size(C,1)
     r = d/sqrt(s);
     w_x = normpdf(r)/normcdf(r);
     w_Sigma = w_x*(w_x+r);
-    x = x + a * asymmetry(w_x * ((mask*Sigma*mask*c)/sqrt(s)));
-    Sigma = Sigma - a * w_Sigma * (mask*Sigma*mask*(c*c')*mask*Sigma*mask)/s + q*eye(6);
+    x = x + a * asymmetry(w_x * ((SigmaStar*c)/sqrt(s)));
+    Sigma = Sigma - a * w_Sigma * (SigmaStar*(c*c')*SigmaStar)/s + q*eye(6);
     
     %% Save
     Trials(iTrial,1).pCorrect = pCorrect;
