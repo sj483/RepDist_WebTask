@@ -19,8 +19,8 @@ gamma = 0.5; % Asymmetric updating for losers [0,Inf]
 mu = 0.1; % Attentional gate mean [0,1]
 kappa = 4; % Attentional gate concentration [0,Inf]
 q = 0.05; % Diffusion/Forgetting [0,1]
-psi = 50;
-omega  = 1;
+psi = 0; % 50
+omega = Inf; % 1
 asymmetry = @(x) min(x,0)*gamma - min(-x,0);
 for iTrial = 1:size(C,1)
     

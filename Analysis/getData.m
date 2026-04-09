@@ -6,6 +6,10 @@ Data = struct2table(Data);
 %% 1. SubjectId
 Data.SubjectId = categorical(Data.SubjectId);
 
+%% 6. State (We do this first so we can filter)
+Data.State = cellfun(@(s)str2double(s),Data.State);
+Data = Data(Data.State==6,:);
+
 %% 2. Birth month+year
 Data.BMY = datetime(Data.BMY,...
     'InputFormat','yyyy-MM',...
@@ -26,9 +30,6 @@ Data.Handedness = categorical(Data.Handedness);
 
 %% 5. L1
 Data.L1 = categorical(Data.L1);
-
-%% 6. State
-Data.State = cellfun(@(s)str2double(s),Data.State);
 
 %% 7. GroupId
 Data.GroupId = categorical(Data.GroupId);
