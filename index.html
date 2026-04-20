@@ -111,6 +111,7 @@
                     Input.length === 24 ||
                     (Input.length === 5 && /^[0-9]+$/.test(Input))
                 ) {
+                    // Prolific or SONA
                     PoolId = Input;
                     ErrorCode = "001";
                     await GenLogAndRedirect(ErrorCode);
@@ -118,10 +119,19 @@
                 }
 
                 if (Input.length === 8) {
+                    // They have been here before
                     SubjectId = Input;
                     PoolId = null;
                     ErrorCode = "002";
                     await LogAndRedirect(ErrorCode);
+                    return;
+                }
+
+                if (Input.length < 8) {
+                    // Sussex ID
+                    PoolId = Input;
+                    ErrorCode = "001";
+                    await GenLogAndRedirect(ErrorCode);
                     return;
                 }
 
