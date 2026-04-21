@@ -1,6 +1,7 @@
 function [Ta,Tb] = getMiniTabs(TItrainIO,SubjectId)
 %% Ta for DataTable01
 Ta = struct2table(TItrainIO);
+Ta.t = floor(((1:numel(TItrainIO))'-1)./5);
 Ta.PairId = categorical(Ta.PairId);
 if iscell(Ta.Correct)
     missing = cellfun(@isempty,Ta.Correct);
@@ -11,7 +12,7 @@ if iscell(Ta.Correct)
 end
 Ta.pCorrect = nan(size(Ta.Correct));
 Ta.apCorrect = nan(size(Ta.Correct));
-Ta = [Ta(:,1:3),Ta(:,6),Ta(:,4:5)];
+Ta = [Ta(:,6),Ta(:,1:3),Ta(:,7:8),Ta(:,4:5)];
 
 uPairId = unique(Ta.PairId);
 Pcorr  = nan(25,5);
@@ -24,13 +25,13 @@ end
 
 %% Tb for DataTable00
 Tb = table;
-Tb.k = nan(1,1);
-Tb.n = nan(1,1);
+Tb.nTrainT = nan(1,1);
+Tb.kTrain = nan(1,1);
 Tb.fpCorrect = nan(1,1);
 Tb.afpCorrect = nan(1,1);
 Tb.b0 = nan(1,1);
 Tb.b1 = nan(1,1);
-Tb.mRtc = nan(1,1);
+Tb.mRtcTrain = nan(1,1);
 
 x = (0:24)';
 mu = geomean(Pcorr,2);
@@ -41,13 +42,13 @@ n = numel(Ta.Correct);
 try
     mRtc = mean(Ta.RT(Ta.Correct),'omitmissing');
 catch
-    mRtc = nanmean(Ta.Correct);
+    mRtc = nanmean(Ta.Correct); %#ok<NANMEAN>
 end
 Tb.b0 = mdl.Coefficients.Estimate(1);
 Tb.b1 = mdl.Coefficients.Estimate(2);
-Tb.k = k;
-Tb.n = n;
-Tb.mRtc = mRtc;
+Tb.nTrainT = n;
+Tb.kTrain = k;
+Tb.mRtcTrain = mRtc;
 
 %% Finish off
 Ta.apCorrect = (Ta.pCorrect-0.5).*2;

@@ -33,6 +33,9 @@ for iSubject = 1:size(Data,1)
 end
 close(fh);
 
+%% Get the probe data
+ProbeData = getProbeData(Data);
+
 %% Compute response entropy
 [dH,zH,nValid] = getResponseEntropy(Data);
 
@@ -47,16 +50,14 @@ Data2Add.zAge = nan(size(Data2Add.Age));
 Data2Add = [Data2Add,Data(:,3:13)];
 Data2Add.dH = dH;
 Data2Add.zH = zH;
-Data2Add.nValid = nValid;
+Data2Add.nTrainR = nValid;
 
 %% Make the output tables
-DataTable00 = outerjoin(Data2Add,DataTable00);
-DataTable00.Properties.VariableNames{1} = 'SubjectId';
-DataTable00.SubjectId_DataTable00 = [];
+DataTable00 = outerjoin(DataTable00,ProbeData,'MergeKeys',true);
+DataTable00 = outerjoin(Data2Add,DataTable00,'MergeKeys',true);
 
-DataTable01 = outerjoin(Data2Add,DataTable01);
-DataTable01.Properties.VariableNames{1} = 'SubjectId';
-DataTable01.SubjectId_DataTable01 = [];
+%DataTable01 = outerjoin(DataTable01,ProbeData,'MergeKeys',true);
+DataTable01 = outerjoin(Data2Add,DataTable01,'MergeKeys',true);
 
 DataTable02 = DataTable01;
 DataTable01.RT = [];
@@ -70,5 +71,5 @@ DataTable01.zAge = zscore(DataTable01.Age);
 DataTable02.zAge = zscore(DataTable02.Age);
 
 %% Save
-save(dataTablesFile,'DataTable00','DataTable01','DataTable02');
+%save(dataTablesFile,'DataTable00','DataTable01','DataTable02');
 return
