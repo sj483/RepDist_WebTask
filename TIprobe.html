@@ -60,14 +60,17 @@ TaskIO.Pairs = {};
 TaskIO.Trials = [];
 </script>
 
+<!-- Helper for posting JSON data -->
+<script src="./Assets/PostJson.js"></script>
+
 <!-- Get participant IDs passed in from URL -->
 <script src="./Assets/GetPpantIds.js"></script>
 
-<!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
-<script src="./Assets/SetDateTime.js"></script>
-
 <!-- Exclusion check -->
 <script src="./Assets/ExclusionCheck.js"></script>
+
+<!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
+<script src="./Assets/SetDateTime.js"></script>
 
 <!-- Import unfocus checking -->
 <script src="./LogUnfocus.js"></script>
@@ -77,9 +80,6 @@ TaskIO.Trials = [];
 
 <!-- Import objects -->
 <script src="./ObjectSpec.js"></script>
-
-<!-- Helper for posting JSON data -->
-<script src="./Assets/PostJson.js"></script>
   
 <script>
 // Chain together the following...

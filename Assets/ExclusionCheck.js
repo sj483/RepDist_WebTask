@@ -905,15 +905,18 @@
 var Exclude = false;
 
 // Define the CheckExclusion function:
-function CheckExclusion() {
+async function CheckExclusion() {
 	
-	if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-		Exclude = true;
-	}
-	
+    // Set OsId and BrowserName
 	var UserAgentParser = new UAParser();
 	var UserAgentResult = UserAgentParser.getResult();
+    var OsId = UserAgentResult.os.name + '_' + UserAgentResult.os.version;
 	var BrowserName = UserAgentResult.browser.name;
+	
+    // Check if on mobile
+	if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(UserAgentResult.ua) ) {
+		Exclude = true;
+	}
 	
     // Conditions for exclusion:
 	// IE and Edge...
@@ -924,7 +927,7 @@ function CheckExclusion() {
 	    if (BrowserName.includes('Edge')){
 		    Exclude = true;
 	    }
-	} catch(Err) {
+	} catch (Err) {
 	    if (BrowserName == 'IE'){
 		    Exclude = true;
 	    }
@@ -939,17 +942,27 @@ function CheckExclusion() {
     if (ScreenHeight < 720) {
         Exclude = true;
     }
-	
+
+    var Data2Send = {};
+    Data2Send.PoolId = PoolId;
+    Data2Send.SubjectId = SubjectId;
+    Data2Send.OS = OsId;
+    Data2Send.Browser = BrowserName;
+    Data2Send.ScreenWidth = ScreenWidth;
+    Data2Send.ScreenHeight = ScreenHeight;
+
+    PostJson('./LogExclude.php',Data2Send);
+
 	// Redirect:
 	if (Exclude) {
 	    if (Boolean(PoolId) && Boolean(SubjectId)) {
-	        window.location.replace('./Exclude.html?PoolId='+PoolId+'&SubjectId='+SubjectId+'#');
+	        //window.location.replace('./Exclude.html?PoolId='+PoolId+'&SubjectId='+SubjectId+'#');
 	    } else if (Boolean(PoolId)) {
-		    window.location.replace('./Exclude.html?PoolId='+PoolId+'#');
+		    //window.location.replace('./Exclude.html?PoolId='+PoolId+'#');
 	    } else if (Boolean(SubjectId)) {
-		    window.location.replace('./Exclude.html?SubjectId='+SubjectId+'#');
+		    //window.location.replace('./Exclude.html?SubjectId='+SubjectId+'#');
 	    } else {
-	        window.location.replace('./Exclude.html');
+	        //window.location.replace('./Exclude.html');
 	    }
 	}
 }
