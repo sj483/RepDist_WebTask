@@ -1,105 +1,80 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Sorry!</title>
-<meta charset="utf-8"/>
+    <title>Sorry!</title>
+    <meta charset="utf-8" />
 
-<!-- Set the favicon logo -->
-<link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
+    <!-- Set the favicon logo -->
+    <link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
 
-<!-- Import the user agent parser -->
-<script src="./Assets/ua-parser.pack.js"></script>
+    <!-- Import the stylesheet -->
+    <link rel="stylesheet" href="./Assets/w3.css">
 
-<!-- Import the stylesheet -->
-<link rel="stylesheet" href="./Assets/w3.css">
+    <!-- Import the user agent parser -->
+    <script src="./Assets/ua-parser.pack.js"></script>
 
-<!-- Some more styling -->
-<style>
-body {padding: 30px 0;}
-</style>
-
-<!-- Get participant IDs passed in from URL -->
-<script src="./Assets/GetPpantIds.js"></script>
-
-<!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO)  -->
-<script src="./Assets/SetDateTime.js"></script>
-
-<script>
-
-// Define some global variables
-var OsId = null;
-var BrowserId = null;
-var UserAgentResult;
-
-// Function to get OS, Browser, and UserAgent (setting the above global vars)
-function GetOsAndBrowser() {
-    
-    var UserAgentParser = new UAParser();
-	UserAgentResult = UserAgentParser.getResult();
-	
-	OsId = UserAgentResult.os.name + '_' + UserAgentResult.os.version;
-	BrowserId = UserAgentResult.browser.name + '_' + UserAgentResult.browser.version;
-	
-	return new Promise(resolve => {resolve()});
-}
-
-
-// OnBodyLoad function
-function OnBodyLoad() {
-    
-    // Promise chain (GetOsAndBrowser + LogExclusion)
-    GetOsAndBrowser().then(function() {LogExclusion();});
-    
-    // If they are using IE, prep the message to display:
-    try {
-        if (UserAgentResult.browser.name.includes('IE') || UserAgentResult.browser.name.includes('Edge')){
-    	    document.getElementById('Message').innerHTML = "<p>You are not able to run the experiment using Internet Explorer or Edge.<br /><br />Please download a newer web browser. We recommend <a href='https://www.google.com/chrome/'>Google Chrome</a>.</p>";
+    <!-- Some more styling -->
+    <style>
+        body {
+            padding: 30px 0;
         }
-    } catch(Err) {
-        if (UserAgentResult.browser.name == 'IE'){
-	        document.getElementById('Message').innerHTML = "<p>You are not able to run the experiment using Internet Explorer or Edge.<br /><br />Please download a newer web browser. We recommend <a href='https://www.google.com/chrome/'>Google Chrome</a>.</p>";
-        }
-    }
-    
-    // Display the main div:
-    document.getElementById('MainDiv').style.visibility = 'visible';
-}
+    </style>
 
-// LogExclusion function
-function LogExclusion() {
-    var Args = {};
-    Args.PoolId = PoolId;
-    Args.SubjectId = SubjectId;
-    Args.OS = OsId;
-    Args.Browser = BrowserId;
-    
-    // Construct the POST:
-    var JsonPost = {
-        type: "POST",
-        url: './ExcludeActions.php',
-        dataType: 'json',
-        data: {FunctionCall: 'LogExclusion', Args: Args},
-        success: function (Obj,Textstatus) {
-            if( !('error' in Obj) ) {
-                  return Obj.result;
-              }
-              else {
-                  console.log(Obj.error);
-              }
+    <script>
+
+        // OnBodyLoad function
+        function OnBodyLoad() {
+
+            // Get UserAgentResult
+            var UserAgentParser = new UAParser();
+            var UserAgentResult = UserAgentParser.getResult();
+
+            var IsMobile = /Android|Mobile|iOS|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(UserAgentResult.ua);
+
+            // Get screen resolution
+            var ScreenWidth = window.screen.width;
+            var ScreenHeight = window.screen.height;
+
+            // If they are using IE, prep the message to display:
+            var Message;
+            if (IsMobile) {
+                Message = "<p>You are not able to run the experiment on " +
+                    "this device.<br>Please use a laptop or desktop " +
+                    "computer.</p>";
+            } else if (UserAgentResult.browser.name.includes('IE') ||
+                UserAgentResult.browser.name.includes('Edge')) {
+                Message = "<p>You are not able to run the experiment " +
+                    "using Internet Explorer or Edge.<br /><br />" +
+                    "Please download a different web browser. We recommend " +
+                    "<a href='https://www.google.com/chrome/'>" +
+                    "Google Chrome</a>.</p>";
+
+            } else if ((ScreenHeight < 720) || (ScreenWidth < 1280)) {
+                Message = "<p>The resolution of your screen is too low " +
+                    "to run this experiment.<br /><br />" +
+                    "Please use a different device.</p>";
+            }
+
+            // Display the main div
+            if (Boolean(Message)) {
+                document.getElementById('Message').innerHTML = Message;
+            }
+            document.getElementById('MainDiv').style.visibility = 'visible';
         }
-    }
-    
-    // Submit the POST:
-    Vals = jQuery.ajax(JsonPost);
-    return new Promise(resolve => {resolve(Vals)});
-}
-</script>
+    </script>
 </head>
 
 <body onload="OnBodyLoad()">
-<div style="visibility:hidden;" id="MainDiv" class="w3-center">
-<h1>Sorry! &#129335;</h1>
-<div id='Message'><p>You are not able to run the experiment on this device.<br>Please use a laptop or desktop computer.</p></div>
-</div>
+    <div style="visibility:hidden;" id="MainDiv" class="w3-center">
+        <h1>Sorry! &#129335;</h1>
+        <div id='Message'>
+            <p>
+                You are not able to run the experiment on this device.
+                <br>Please use a laptop or desktop computer.
+            </p>
+        </div>
+    </div>
 </body>
+
 </html>

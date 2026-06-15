@@ -914,7 +914,7 @@ async function CheckExclusion() {
 	var BrowserName = UserAgentResult.browser.name;
 	
     // Check if on mobile
-	if ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(UserAgentResult.ua) ) {
+	if ( /Android|Mobile|iOS|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(UserAgentResult.ua) ) {
 		Exclude = true;
 	}
 	
@@ -956,13 +956,16 @@ async function CheckExclusion() {
 	// Redirect:
 	if (Exclude) {
 	    if (Boolean(PoolId) && Boolean(SubjectId)) {
-	        //window.location.replace('./Exclude.html?PoolId='+PoolId+'&SubjectId='+SubjectId+'#');
+	        window.location.replace(
+                './Exclude.html?PoolId='+PoolId+
+                '&SubjectId='+SubjectId+'#');
 	    } else if (Boolean(PoolId)) {
-		    //window.location.replace('./Exclude.html?PoolId='+PoolId+'#');
+		    window.location.replace('./Exclude.html?PoolId='+PoolId+'#');
 	    } else if (Boolean(SubjectId)) {
-		    //window.location.replace('./Exclude.html?SubjectId='+SubjectId+'#');
+		    window.location.replace(
+                './Exclude.html?SubjectId='+SubjectId+'#');
 	    } else {
-	        //window.location.replace('./Exclude.html');
+	        window.location.replace('./Exclude.html');
 	    }
 	}
 }
