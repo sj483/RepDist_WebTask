@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 require __DIR__ . '/Credentials.php';
 require __DIR__ . '/FormatDateTimeStr.php';
+require __DIR__ . '/GetRegisterRow.php';
 require __DIR__ . '/GetTimeInterval.php';
 require __DIR__ . '/GetTargetUrl.php';
 
@@ -13,6 +14,16 @@ if ($Conn->connect_error) {
 
 // Unpack the inputs ...
 $Input = json_decode(file_get_contents('php://input'), true);
+if (
+    !is_array($Input) ||
+    !isset($Input['SubjectId']) ||
+    !isset($Input['DateTime_Start']) ||
+    !isset($Input['ClientTimeZone']) ||
+    !isset($Input['TaskId'])
+) {
+    $Conn->close();
+    RespondWithJsonNotice(400, 'InstructActions.php called with bad inputs.');
+}
 
 // SubjectId
 $SubjectId = $Input['SubjectId'];
@@ -42,13 +53,21 @@ $TaskId = mysqli_real_escape_string($Conn, $TaskId);
 
 // Test to see if enough time has passed
 $EnoughTime = false;
+$ExpectedState = null;
+$NextState = null;
+$WriteInstructionTime = false;
 switch ($TaskId) {
     case 'TItrain':
+        $ExpectedState = 2;
+        $NextState = 3;
+        $WriteInstructionTime = true;
         if ($Interval > 81) {
             $EnoughTime = true;
         }
         break;
     case 'TIprobe':
+        $ExpectedState = 4;
+        $NextState = 5;
         if ($Interval > 44) {
             $EnoughTime = true;
         }
@@ -60,33 +79,44 @@ switch ($TaskId) {
 }
 
 // Get the State
-$Sql00 = "SELECT * FROM Register WHERE SubjectId = '$SubjectId'";
-$QueryRes00 = mysqli_query($Conn, $Sql00);
-if ($QueryRes00 === false) {
+$SubjectRow = GetRegisterRow($Conn, $SubjectId);
+if ($SubjectRow === null) {
     $Conn->close();
-    die("Query Sql00 failed to execute successfully!");
-} else {
-    while ($Row = mysqli_fetch_assoc($QueryRes00)) {
-        $State = $Row["State"];
+    RespondWithJsonNotice(404, 'Unknown SubjectId.');
+}
+$State = intval($SubjectRow["State"]);
+if ($State !== $ExpectedState) {
+    $Url = GetTargetUrl($Conn, $SubjectId);
+    $Conn->close();
+    if ($Url === null) {
+        RespondWithJsonNotice(
+            409,
+            'Subject is not ready for this instruction page.'
+        );
     }
+    echo json_encode(array('TargetUrl' => $Url));
+    exit;
 }
 
 $Result = array();
 if ($EnoughTime) {
     // They are good to continue...
-    $State++;
-    if ($TaskId == 'TItrain') {
+    if ($WriteInstructionTime) {
         $Sql01 = "UPDATE Register SET 
-            State = $State, 
+            State = $NextState, 
             DateTime_TIinstr = '$DateTime_Instruct' 
-            WHERE SubjectId ='$SubjectId'";
+            WHERE SubjectId ='$SubjectId' AND State = $ExpectedState";
     } else {
         $Sql01 = "UPDATE Register SET 
-            State = $State 
-            WHERE SubjectId ='$SubjectId'";
+            State = $NextState 
+            WHERE SubjectId ='$SubjectId' AND State = $ExpectedState";
     }
     if ($Conn->query($Sql01) === true) {
         $Url = GetTargetUrl($Conn, $SubjectId);
+        if ($Url === null) {
+            $Conn->close();
+            RespondWithJsonNotice(500, 'Failed to determine the next page.');
+        }
         $Result['TargetUrl'] = $Url;
     } else {
         $Conn->close();

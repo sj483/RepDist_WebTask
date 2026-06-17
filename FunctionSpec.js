@@ -15,15 +15,14 @@ async function GetAssignment() {
     // Otherwise, request the Assignment from the server...
     var Data = {};
     Data.SubjectId = SubjectId;
-    var P1 = await fetch('./GetAssignment.php', {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Data)
-    });
-    var Assignment = await P1.json();
+    var Assignment = await PostJson('./GetAssignment.php', Data);
+    if (Assignment && Assignment.TargetUrl) {
+        window.location.replace(Assignment.TargetUrl);
+        return null;
+    }
+    if (!(Assignment && Assignment.GroupId && Assignment.ImgPerm)) {
+        throw new Error('GetAssignment returned an invalid payload.');
+    }
     // Assignment contains the following fields: GroupId, ImgPerm
     return Assignment;
 }
@@ -129,16 +128,7 @@ async function WriteTaskIO() {
     } else {
         Data.TItrainIO = JSON.stringify(TaskIO);
     }
-    var P1 = await fetch('./WriteXIO.php', {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Data)
-    });
-    var Result = await P1.json();
-    return Result;
+    return PostJson('./WriteXIO.php', Data);
 }
 
 async function OnFinishTask() {

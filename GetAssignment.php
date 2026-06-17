@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
 require __DIR__ . '/Credentials.php';
+require __DIR__ . '/GetRegisterRow.php';
+require __DIR__ . '/GetTargetUrl.php';
 require __DIR__ . '/MakeAssignment.php';
 
 // Connect to the database
@@ -15,30 +17,33 @@ if (!$Input) {
     // If using MATLAB's webwrite function
 	$Input = $_POST;
 }
-$SubjectId = $Input['SubjectId'];
+$Input = is_array($Input) ? $Input : array();
+$SubjectId = isset($Input['SubjectId']) ? $Input['SubjectId'] : null;
 $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
 if (!boolval($SubjectId)) {
-    die('SubjectId not set in call to GetAssignment.php;');
+	$Conn->close();
+    RespondWithJsonNotice(400, 'SubjectId not set in call to GetAssignment.php;');
 }
 
 // Check whether an assignment has been made yet
-$Sql00 = "SELECT * FROM Register WHERE SubjectId = '$SubjectId'";
-$QueryRes00 = mysqli_query($Conn, $Sql00);
-$SubjectFound = false;
-$GroupId = null;
-$ImgPerm = null;
-if ($QueryRes00 === false) {
-    die("Sql00 failed to execute successfully!");
-} else {
-    while ($Row = mysqli_fetch_assoc($QueryRes00)) {
-        $SubjectFound = true;
-        $GroupId = $Row["GroupId"];
-        $ImgPerm = json_decode($Row["ImgPerm"], true);
-        $Assignment = array();
-        $Assignment["GroupId"] = $GroupId;
-        $Assignment["ImgPerm"] = $ImgPerm;
-    }
+$SubjectRow = GetRegisterRow($Conn, $SubjectId);
+if ($SubjectRow === null) {
+	$Conn->close();
+	RespondWithJsonNotice(404, 'Unknown SubjectId.');
 }
+$State = intval($SubjectRow["State"]);
+if ($State !== 3 && $State !== 5) {
+	$Url = GetTargetUrl($Conn, $SubjectId);
+	$Conn->close();
+	echo json_encode(array('TargetUrl' => $Url));
+	exit;
+}
+
+$GroupId = $SubjectRow["GroupId"];
+$ImgPerm = json_decode($SubjectRow["ImgPerm"], true);
+$Assignment = array();
+$Assignment["GroupId"] = $GroupId;
+$Assignment["ImgPerm"] = $ImgPerm;
 
 // If either the GroupId or ImgPerm are unset
 $MadeAss = false;
@@ -51,7 +56,7 @@ if ((!boolval($GroupId)) || (!boolval($ImgPerm))) {
 
 // If we have just made an assignment ... 
 // ... and the SubjectId is already recorded in the Register table ...
-if ($SubjectFound && $MadeAss) {
+if ($MadeAss) {
     $ImgPerm = json_encode($ImgPerm);
     $Sql01 = "UPDATE Register SET 
         GroupId = '$GroupId', 

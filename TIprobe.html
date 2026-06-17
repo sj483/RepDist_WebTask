@@ -92,50 +92,57 @@ TaskIO.Trials = [];
 // ... 4) Make the TrialLoop
 // ... 5) Call jsPsych.run([TrialLoop])
 async function StartUp() {
-    // (1)...
-    var Assignment = await GetAssignment();
-    TaskIO.GroupId = Assignment.GroupId;
-    var ImgPerm = Assignment.ImgPerm
+    try {
+        // (1)...
+        var Assignment = await GetAssignment();
+        if (!Assignment) {
+            return;
+        }
+        TaskIO.GroupId = Assignment.GroupId;
+        var ImgPerm = Assignment.ImgPerm
 
-    // (2)...
-    var Pairs = [];
-    for (iPair = 0; iPair < 5; iPair++){
-        var PosId = String.fromCharCode(65+iPair);
-        var NegId = String.fromCharCode(66+iPair);
+        // (2)...
+        var Pairs = [];
+        for (iPair = 0; iPair < 5; iPair++){
+            var PosId = String.fromCharCode(65+iPair);
+            var NegId = String.fromCharCode(66+iPair);
+            Pairs.push({
+                PairId: iPair,
+                Pos: ImgPerm[PosId],
+                Neg: ImgPerm[NegId]});
+        }
         Pairs.push({
-            PairId: iPair,
-            Pos: ImgPerm[PosId],
-            Neg: ImgPerm[NegId]});
+            PairId: 5,
+            Pos: ImgPerm['B'],
+            Neg: ImgPerm['D']
+        });
+        Pairs.push({
+            PairId: 6,
+            Pos: ImgPerm['C'],
+            Neg: ImgPerm['E']
+        });
+        Pairs.push({
+            PairId: 7,
+            Pos: ImgPerm['B'],
+            Neg: ImgPerm['E']
+        });
+        TaskIO.Pairs = Pairs;
+
+        // (3)...
+        TimelineVars = await GetTimelineVars(Pairs);
+
+        // (4)...
+        var TrialLoop = {
+            timeline: [Fixation,Trial],
+            timeline_variables: TimelineVars,
+            randomize_order: false
+        };
+
+        // (5)...
+        jsPsych.run([PreloadImgs,EnterFullscreen,TrialLoop,ExitFullscreen]);
+    } catch (Err) {
+        RedirectToError(ErrorCodes.TaskCompletionWriteFailed);
     }
-    Pairs.push({
-        PairId: 5,
-        Pos: ImgPerm['B'],
-        Neg: ImgPerm['D']
-    });
-    Pairs.push({
-        PairId: 6,
-        Pos: ImgPerm['C'],
-        Neg: ImgPerm['E']
-    });
-    Pairs.push({
-        PairId: 7,
-        Pos: ImgPerm['B'],
-        Neg: ImgPerm['E']
-    });
-    TaskIO.Pairs = Pairs;
-
-    // (3)...
-    TimelineVars = await GetTimelineVars(Pairs);
-
-    // (4)...
-    var TrialLoop = {
-        timeline: [Fixation,Trial],
-        timeline_variables: TimelineVars,
-        randomize_order: false
-    };
-
-    // (5)...
-    jsPsych.run([PreloadImgs,EnterFullscreen,TrialLoop,ExitFullscreen]);
 }
 StartUp();
 </script>

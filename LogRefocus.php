@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require __DIR__ . '/Credentials.php';
+require __DIR__ . '/GetRegisterRow.php';
 require __DIR__ . '/GetTimeInterval.php';
 
 // Preallocate the result
@@ -18,35 +19,40 @@ if ($Conn->connect_error) {
 
 // Get the input variables
 $Input = json_decode(file_get_contents('php://input'), true);
-$SubjectId = $Input['SubjectId'];
+$Input = is_array($Input) ? $Input : array();
+$SubjectId = isset($Input['SubjectId']) ? $Input['SubjectId'] : null;
 $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
+$SubjectRow = GetRegisterRow($Conn, $SubjectId);
+if ($SubjectRow === null) {
+    $Conn->close();
+    echo json_encode($Result);
+    exit;
+}
 
 // Set the current time
 $Now = new DateTimeImmutable("now", new DateTimeZone('Europe/London'));
 
-// Query the Unfocuses table to get last time they unfocused
-$Sql00 = "SELECT * FROM Unfocuses WHERE SubjectId = '$SubjectId'";
+// Query the Unfocuses table to get the latest time they unfocused
+$Sql00 = "SELECT DateTime_Unfocus FROM Unfocuses
+    WHERE SubjectId = '$SubjectId'
+    ORDER BY DateTime_Unfocus DESC
+    LIMIT 1";
 $QueryRes00 = mysqli_query($Conn, $Sql00);
 if ($QueryRes00 === false) {
     $Conn->close();
     die("Query Sql00 failed to execute successfully!");
-} else {
-    $iRow = 0;
-    while ($Row = mysqli_fetch_assoc($QueryRes00)) {
-        $iRow = $iRow + 1;
-        $LatestTime = new DateTimeImmutable(
-            str_replace(' ', 'T', $Row["DateTime_Unfocus"]),
-            new DateTimeZone('Europe/London')
-        );
-        if ($iRow == 1) {
-            $DateTime_Unfocus = $LatestTime;
-        } else {
-            if ($LatestTime > $DateTime_Unfocus) {
-                $DateTime_Unfocus = $LatestTime;
-            }
-        }
-    }
 }
+$Row = mysqli_fetch_assoc($QueryRes00);
+if ($Row === null) {
+    $Conn->close();
+    echo json_encode($Result);
+    exit;
+}
+
+$DateTime_Unfocus = new DateTimeImmutable(
+    str_replace(' ', 'T', $Row["DateTime_Unfocus"]),
+    new DateTimeZone('Europe/London')
+);
 
 // Now we have the latest DateTime_Unfocus set, ...
 // ... compute whether the participant has been off away for too long

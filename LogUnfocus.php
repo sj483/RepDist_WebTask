@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require __DIR__ . '/Credentials.php';
+require __DIR__ . '/GetRegisterRow.php';
 
 // Preallocate the result
 $Result = array();
@@ -17,10 +18,17 @@ if ($Conn->connect_error) {
 
 // Get the input variables
 $Input = json_decode(file_get_contents('php://input'), true);
-$SubjectId = $Input['SubjectId'];
+$Input = is_array($Input) ? $Input : array();
+$SubjectId = isset($Input['SubjectId']) ? $Input['SubjectId'] : null;
 $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
-$Href = $Input['Href'];
+$Href = isset($Input['Href']) ? $Input['Href'] : '';
 $Href = mysqli_real_escape_string($Conn, $Href);
+$SubjectRow = GetRegisterRow($Conn, $SubjectId);
+if ($SubjectRow === null) {
+    $Conn->close();
+    echo json_encode($Result);
+    exit;
+}
 
 // Set the current time
 $Now = new DateTimeImmutable("now", new DateTimeZone('Europe/London'));

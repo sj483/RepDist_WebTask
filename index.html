@@ -94,10 +94,15 @@
         }
 
         async function SubmitForm() {
-            var Input = document.getElementById("Input_ID").value;
+            var Input = document.getElementById("Input_ID").value.trim();
             var ErrorCode = null;
+            document.getElementById("Input_ID").value = Input;
 
             try {
+                if (!Input) {
+                    alert("Please enter your participant ID.");
+                    return;
+                }
                 if (
                     Input.length === 24 ||
                     (Input.length === 5 && /^[0-9]+$/.test(Input))
@@ -191,6 +196,7 @@
                                 name="ID"
                                 placeholder="Participation ID"
                                 size="26"
+                                required
                             >
                         </td>
                     </tr>

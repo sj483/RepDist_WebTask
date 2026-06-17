@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require __DIR__ . '/Credentials.php';
+require __DIR__ . '/GetRegisterRow.php';
 
 // Preallocate the Result
 $Result = array();
@@ -13,22 +14,19 @@ if ($Conn->connect_error) {
 
 // Get the inputs
 $Input = json_decode(file_get_contents('php://input'), true);
-$SubjectId = $Input['SubjectId'];
+$Input = is_array($Input) ? $Input : array();
+$SubjectId = isset($Input['SubjectId']) ? $Input['SubjectId'] : null;
 $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
 
 // Get the State
-$Sql = "SELECT * FROM Register WHERE SubjectId = '$SubjectId'";
-$QueryRes = mysqli_query($Conn, $Sql);
-if ($QueryRes === false) {
-    die("Sql failed to execute successfully!");
-} else {
-    while ($Row = mysqli_fetch_assoc($QueryRes)) {
-        $State = $Row["State"];
-    }
+$State = null;
+$SubjectRow = GetRegisterRow($Conn, $SubjectId);
+if ($SubjectRow !== null) {
+    $State = intval($SubjectRow["State"]);
 }
 
 // Set the Result
-if ($State >= 0) {
+if ($State !== null && $State >= 0) {
     $State = null;
 }
 $Result['State'] = $State;

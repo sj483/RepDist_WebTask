@@ -1,19 +1,20 @@
 <?php
+require_once __DIR__ . '/GetRegisterRow.php';
 
 // A function that returns the TargetUrl given only a SubjectId ...
 // ... and an active SQL connection;
 function GetTargetUrl($Conn, $SubjectId)
 {
-	// Get the State
-	$Sql = "SELECT * FROM Register WHERE SubjectId = '$SubjectId'";
-	$QueryRes = mysqli_query($Conn, $Sql);
-	if ($QueryRes === false) {
-		die("Sql failed to execute successfully!");
-	} else {
-		while ($Row = mysqli_fetch_assoc($QueryRes)) {
-			$State = $Row["State"];
-		}
+	$Row = GetRegisterRow($Conn, $SubjectId);
+	if ($Row === null || !isset($Row["State"])) {
+		return null;
 	}
+
+	$State = $Row["State"];
+	if ($State === null || $State === '') {
+		return null;
+	}
+	$State = intval($State);
 
 	switch ($State) {
 		case -2:
@@ -46,6 +47,6 @@ function GetTargetUrl($Conn, $SubjectId)
 			return "./Complete.html?SubjectId=$SubjectId#";
 
 		default:
-			die("Invalid state: '$State'");
+			return null;
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require __DIR__ . '/Credentials.php';
+require __DIR__ . '/GetRegisterRow.php';
 require __DIR__ . '/GetTargetUrl.php';
 
 // Connect to the database:
@@ -11,10 +12,26 @@ if ($Conn->connect_error) {
 
 // Unpack the inputs...
 $Input = json_decode(file_get_contents('php://input'), true);
+if (!is_array($Input) || !isset($Input['SubjectId'])) {
+	$Conn->close();
+	RespondWithJsonNotice(400, 'RegisterActions.php called with bad inputs.');
+}
 
 // SubjectId
 $SubjectId = $Input['SubjectId'];
 $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
+$SubjectRow = GetRegisterRow($Conn, $SubjectId);
+if ($SubjectRow === null) {
+	$Conn->close();
+	RespondWithJsonNotice(404, 'Unknown SubjectId.');
+}
+$State = intval($SubjectRow['State']);
+if ($State !== 1) {
+	$Url = GetTargetUrl($Conn, $SubjectId);
+	$Conn->close();
+	echo json_encode(array('TargetUrl' => $Url));
+	exit;
+}
 
 // Gender
 $Gender = $Input["Gender"];
@@ -44,7 +61,7 @@ $Sql00 = "UPDATE Register SET
 	Handedness = '$Handedness', 
 	BMY = '$BMY', 		
 	DateTime_Register = '$DateTime_Register'
-	WHERE SubjectId = '$SubjectId'";
+	WHERE SubjectId = '$SubjectId' AND State = 1";
 if ($Conn->query($Sql00) === false) {
 	$Conn->close();
 	die('Query $Sql00 failed to execute successfully;');
@@ -52,6 +69,10 @@ if ($Conn->query($Sql00) === false) {
 
 // Get the TargetUrl
 $Url = GetTargetUrl($Conn, $SubjectId);
+if ($Url === null) {
+	$Conn->close();
+	RespondWithJsonNotice(500, 'Failed to determine the next page.');
+}
 $Result = array();
 $Result['TargetUrl'] = $Url;
 

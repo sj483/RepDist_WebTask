@@ -64,6 +64,8 @@
     <script src="./ShowWarning.js"></script>
 
     <script>
+        var AudioStarted = false;
+
         async function OnBodyLoad() {
             ShowWarningIfNeeded();
             if (!TaskId) {
@@ -105,7 +107,10 @@
         }
 
         function OnStartAudio() {
-            SetDateTime();
+            if (!AudioStarted) {
+                AudioStarted = true;
+                SetDateTime();
+            }
         }
 
         function OnFinishAudio() {
