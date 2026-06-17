@@ -1,8 +1,18 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Thank you</title>
     <meta charset="UTF-8">
+
+    <!-- Function to make POST requests -->
+    <script src="./Assets/PostJson.js"></script>
+
+    <!-- Get participant IDs passed in from URL -->
+    <script src="./Assets/GetPpantIds.js"></script>
+
+    <!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO) -->
+    <script src="./Assets/SetDateTime.js"></script>
 
     <!-- Set the favicon logo -->
     <link rel="icon" href="./Assets/Logo.png" type="image/x-icon" />
@@ -17,32 +27,51 @@
         }
     </style>
 
-    <!-- Get participant IDs passed in from URL -->
-    <script src="./Assets/GetPpantIds.js"></script>
-
-    <!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO) -->
-    <script src="./Assets/SetDateTime.js"></script>
-
     <!-- Main script block -->
     <script>
         async function GetCompletionLink() {
-            var P1 = await fetch('./CompleteActions.php', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ SubjectId: SubjectId })
-            }
-            );
-            var Result = await P1.json();
+            var Result = await PostJson('./GetCompletionLink.php',
+                { SubjectId: SubjectId });
             return Result;
         }
 
-        async function OnBodyLoad() {
-            var Response = await GetCompletionLink();
+        async function GetFeedback() {
+            var Result = await PostJson('./GetFeedback.php',
+                { SubjectId: SubjectId });
+            return Result;
+        }
 
-            if (!Response.FoundSubject) {
+        async function WriteFeedback() {
+            var Result = await PostJson('./WriteFeedback.php',
+                {
+                    SubjectId: SubjectId,
+                    Feedback: document.getElementById('FeedbackArea').value
+                });
+            return Result;
+        }
+
+        var FeedbackEditable = true;
+        function OnButtonClick() {
+            if (FeedbackEditable) {
+                WriteFeedback().then(function () {
+                    document.getElementById("FeedbackArea").disabled = true;
+                    document.getElementById('FeedbackButton').innerText = 
+                        'Edit feedback';
+                    FeedbackEditable = false;
+                });
+            } else {
+                document.getElementById("FeedbackArea").disabled = false;
+                document.getElementById('FeedbackButton').innerText = 
+                    'Submit feedback';
+                FeedbackEditable = true;
+            }
+        }
+
+        async function OnBodyLoad() {
+            var Response0 = await GetCompletionLink();
+            var Response1 = await GetFeedback();
+
+            if (!Response0.FoundSubject) {
                 alert('Sorry, we could not find any record of your ' +
                     'participation.\nPlease contact Sophie Johnson at ' +
                     'sj483@sussex.ac.uk.');
@@ -56,7 +85,7 @@
                 return;
             }
 
-            if (!Response.Completed) {
+            if (!Response0.Completed) {
                 alert('Sorry, it appears that you have not ' +
                     'completed all parts of the experiment yet. ' +
                     'I am not sure how you ended up on this page.');
@@ -71,17 +100,39 @@
             }
 
             document.getElementById('CompletionLink').outerHTML =
-                Response.CompletionLink;
+                Response0.CompletionLink;
+
+            if (Response1.FeedbackFound) {
+                FeedbackEditable = false;
+                document.getElementById('FeedbackArea').value =
+                    Response1.Feedback;
+                document.getElementById('FeedbackButton').innerText =
+                    'Edit feedback';
+            } else {
+                document.getElementById("FeedbackArea").disabled = false;
+                document.getElementById('FeedbackButton').innerText =
+                    'Submit feedback';
+            }
+            document.getElementById("FeedbackButton").disabled = false;
+
+            document.getElementById("HtmlBody").style.visibility =
+                "visible";
         }
     </script>
 </head>
 
-<body class="w3-center" onload="OnBodyLoad()">
+<body class="w3-center" style="visibility: hidden;" onload="OnBodyLoad()" id="HtmlBody">
     <h1>Thank you! &#128591;</h1>
     <p>The experiment is now complete. Thank you for taking part.</p>
+    <p>Please feel free to leave us feedback in the following text box.</p>
+    <textarea id="FeedbackArea" rows="7" cols="67" disabled></textarea>
     <br /><br />
-    <p>Please click on the link below to make your submission:<br />
+    <button id="FeedbackButton" onclick="OnButtonClick()" disabled>
+        Please wait</button>
+    <br /><br />
+    <p>Click on the link below to make your submission:<br />
         <a id="CompletionLink" href="./Error.html" target="_blank">###</a>
     </p>
 </body>
+
 </html>

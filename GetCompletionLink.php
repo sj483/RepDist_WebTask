@@ -42,7 +42,7 @@ if ($IsWorthy) {
 			'" target="_blank">' . $ProlificCompletionLink . '</a>';
 	} else {
 		$Link = '<a id="CompletionLink" href="https://www.sussex.ac.uk/"' .
-			' target="_blank">Right here...</a>';
+			' target="_blank">Continue...</a>';
 	}
 } else {
 	$Link = '<a id="CompletionLink" href="./Error.html?SubjectId=' .
