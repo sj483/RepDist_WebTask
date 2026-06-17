@@ -45,6 +45,9 @@
     <!-- Get participant IDs passed in from URL -->
     <script src="./Assets/GetPpantIds.js"></script>
 
+    <!-- Shared participant-facing error codes -->
+    <script src="./Assets/ErrorCodes.js"></script>
+
     <!-- Exclusion check -->
     <script src="./Assets/ExclusionCheck.js"></script>
 
@@ -77,13 +80,8 @@
                 document.getElementById('Audio').src =
                     './Instructions/TIprobe.mp3';
             } else {
-                var ErrorCode = 'XXX';
-                var URL = "./Error.html?SubjectId=" +
-                    encodeURIComponent(String(SubjectId)) +
-                    '&ErrorCode=' +
-                    encodeURIComponent(String(ErrorCode)) +
-                    "#";
-                window.location.replace(URL);
+                RedirectToError(ErrorCodes.InstructUnknownTaskId);
+                return;
             }
             document.getElementById('Canvas').style.visibility = 'visible';
         }
@@ -103,15 +101,6 @@
                 body: JSON.stringify(Data2Send)
             });
             var Result = await P1.json();
-            if (Result.Error) {
-                var ErrorCode = 'XXX';
-                var URL = "./Error.html?SubjectId=" +
-                    encodeURIComponent(String(SubjectId)) +
-                    '&ErrorCode=' +
-                    encodeURIComponent(String(ErrorCode)) +
-                    "#";
-                window.location.replace(URL);
-            }
             return Result;
         }
 
@@ -126,6 +115,10 @@
 
         function Continue() {
             LogInstruct().then(function (P1) {
+                if (!(P1 && P1.TargetUrl)) {
+                    RedirectToError(ErrorCodes.InstructMissingTargetUrl);
+                    return;
+                }
                 TargetUrl = P1.TargetUrl;
                 if (window.location.href != TargetUrl) {
                     window.location.replace(TargetUrl);
@@ -133,13 +126,7 @@
                     location.reload();
                 }
             }).catch(function (Err) {
-                var ErrorCode = 'XXX';
-                var URL = "./Error.html?SubjectId=" +
-                    encodeURIComponent(String(SubjectId)) +
-                    '&ErrorCode=' +
-                    encodeURIComponent(String(ErrorCode)) +
-                    "#";
-                window.location.replace(URL);
+                RedirectToError(ErrorCodes.InstructContinueFailed);
             });
         }
     </script>

@@ -45,8 +45,10 @@ if ($IsWorthy) {
 			' target="_blank">Continue...</a>';
 	}
 } else {
+	$ErrorCode = $FoundSubject ? '041' : '040';
 	$Link = '<a id="CompletionLink" href="./Error.html?SubjectId=' .
-		$SubjectId . '&ErrorCode=XXX#" target="_blank">ERROR</a>';
+		$SubjectId . '&ErrorCode=' . $ErrorCode .
+		'#" target="_blank">ERROR</a>';
 }
 
 // Return the result

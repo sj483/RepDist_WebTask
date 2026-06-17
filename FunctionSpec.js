@@ -144,9 +144,12 @@ async function WriteTaskIO() {
 async function OnFinishTask() {
     try {
         var Result = await WriteTaskIO();
-        window.location.replace(Result.TargetUrl);
+        if (Result && Result.TargetUrl) {
+            window.location.replace(Result.TargetUrl);
+        } else {
+            RedirectToError(ErrorCodes.TaskCompletionWriteFailed);
+        }
     } catch (Err) {
-        window.location.replace(
-            "./Error.html?SubjectId=" + SubjectId + '&ErrorCode=XXX#');
+        RedirectToError(ErrorCodes.TaskCompletionWriteFailed);
     }
 }

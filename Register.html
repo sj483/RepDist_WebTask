@@ -9,6 +9,9 @@
 <!-- Get participant IDs passed in from URL -->
 <script src="./Assets/GetPpantIds.js"></script>
 
+<!-- Shared participant-facing error codes -->
+<script src="./Assets/ErrorCodes.js"></script>
+
 <!-- Exclusion check -->
 <script src="./Assets/ExclusionCheck.js"></script>
 
@@ -50,17 +53,16 @@ async function SubmitForm() {
 		Handedness: Handedness,
         BMY: BMY};
 
-    // Register
-    var Result = await PostJson('./RegisterActions.php', Data2Send);
-     if (Boolean(Result)) {
-         window.location.replace(Result.TargetUrl);
-     } else {
-        var ErrorCode = 'XXX';
-        var Url = "./Error.html?SubjectId=" +
-            encodeURIComponent(String(SubjectId)) + 
-            '&ErrorCode=' + ErrorCode + "#";
-        window.location.replace(Url);
-   }
+    try {
+        var Result = await PostJson('./RegisterActions.php', Data2Send);
+        if (Result && Result.TargetUrl) {
+            window.location.replace(Result.TargetUrl);
+        } else {
+            RedirectToError(ErrorCodes.RegisterMissingTargetUrl);
+        }
+    } catch (Err) {
+        RedirectToError(ErrorCodes.RegisterMissingTargetUrl);
+    }
 };
 </script>
 </head>

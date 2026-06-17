@@ -19,24 +19,15 @@
     <!-- Get participant IDs passed in from URL -->
     <script src="./Assets/GetPpantIds.js"></script>
 
+    <!-- Shared participant-facing error codes -->
+    <script src="./Assets/ErrorCodes.js"></script>
+
     <!-- Exclusion check -->
     <script src="./Assets/ExclusionCheck.js"></script>
 
     <script>
-        function BuildErrorUrl(ErrorCode) {
-            return (
-                "./Error.html?PoolId=" +
-                encodeURIComponent(String(PoolId)) +
-                "&SubjectId=" +
-                encodeURIComponent(String(SubjectId)) +
-                '&ErrorCode=' +
-                encodeURIComponent(String(ErrorCode)) +
-                "#"
-            );
-        }
-
         function HandleError(ErrorCode) {
-            window.location.replace(BuildErrorUrl(ErrorCode));
+            RedirectToError(ErrorCode);
         }
 
         function RedirectOrError(Result, ErrorCode) {
@@ -61,7 +52,7 @@
                 PpantIds.PoolId = PoolId;
                 PpantIds.SubjectId = SubjectId;
             } else {
-                HandleError("000");
+                HandleError(ErrorCodes.LandingMissingIds);
                 return null;
             }
 
@@ -113,7 +104,7 @@
                 ) {
                     // Prolific or SONA
                     PoolId = Input;
-                    ErrorCode = "001";
+                    ErrorCode = ErrorCodes.LandingSubmitPoolId;
                     await GenLogAndRedirect(ErrorCode);
                     return;
                 }
@@ -122,7 +113,7 @@
                     // They have been here before
                     SubjectId = Input;
                     PoolId = null;
-                    ErrorCode = "002";
+                    ErrorCode = ErrorCodes.LandingSubmitSubjectId;
                     await LogAndRedirect(ErrorCode);
                     return;
                 }
@@ -130,7 +121,7 @@
                 if (Input.length < 8) {
                     // Sussex ID
                     PoolId = Input;
-                    ErrorCode = "001";
+                    ErrorCode = ErrorCodes.LandingSubmitPoolId;
                     await GenLogAndRedirect(ErrorCode);
                     return;
                 }
@@ -146,7 +137,7 @@
         // --- Execute functions ---
         var GetUserInput = false;
         async function Init() {
-            var ErrorCode = "004";
+            var ErrorCode = ErrorCodes.LandingResumePoolId;
 
             if ((!PoolId) && (!SubjectId)) {
                 // Get user input
@@ -157,10 +148,10 @@
             try {
                 // No user input required; call and redirect.
                 if (!PoolId && Boolean(SubjectId)) {
-                    ErrorCode = "003";
+                    ErrorCode = ErrorCodes.LandingResumeSubjectId;
                     await LogAndRedirect(ErrorCode);
                 } else {
-                    ErrorCode = "004";
+                    ErrorCode = ErrorCodes.LandingResumePoolId;
                     await GenLogAndRedirect(ErrorCode);
                 }
             } catch (Err) {

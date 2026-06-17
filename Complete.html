@@ -11,6 +11,9 @@
     <!-- Get participant IDs passed in from URL -->
     <script src="./Assets/GetPpantIds.js"></script>
 
+    <!-- Shared participant-facing error codes -->
+    <script src="./Assets/ErrorCodes.js"></script>
+
     <!-- Get DateTime_Start and ClientTimeZone (and add to TaskIO) -->
     <script src="./Assets/SetDateTime.js"></script>
 
@@ -75,13 +78,7 @@
                 alert('Sorry, we could not find any record of your ' +
                     'participation.\nPlease contact Sophie Johnson at ' +
                     'sj483@sussex.ac.uk.');
-                var ErrorCode = 'XXX';
-                var URL = "./Error.html?SubjectId=" +
-                    encodeURIComponent(String(SubjectId)) +
-                    '&ErrorCode=' +
-                    encodeURIComponent(String(ErrorCode)) +
-                    "#";
-                window.location.replace(URL);
+                RedirectToError(ErrorCodes.CompleteMissingSubject);
                 return;
             }
 
@@ -89,13 +86,7 @@
                 alert('Sorry, it appears that you have not ' +
                     'completed all parts of the experiment yet. ' +
                     'I am not sure how you ended up on this page.');
-                var ErrorCode = 'XXX';
-                var URL = "./Error.html?SubjectId=" +
-                    encodeURIComponent(String(SubjectId)) +
-                    '&ErrorCode=' +
-                    encodeURIComponent(String(ErrorCode)) +
-                    "#";
-                window.location.replace(URL);
+                RedirectToError(ErrorCodes.CompleteIncomplete);
                 return;
             }
 

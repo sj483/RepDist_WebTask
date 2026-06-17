@@ -20,13 +20,16 @@
     <!-- Get participant IDs passed in from URL -->
     <script src="./Assets/GetPpantIds.js"></script>
 
+    <!-- Shared participant-facing error codes -->
+    <script src="./Assets/ErrorCodes.js"></script>
+
     <script>
         async function GetState() {
             // Try the URL parameters first
             var UrlParams = new URLSearchParams(window.location.search);
             var State = UrlParams.has('State') ? UrlParams.get('State') : null;
             if (State != null) {
-                return State;
+                return Number(State);
             }
 
             // Query the server otherwise
@@ -38,10 +41,9 @@
                 return Result.State;
             } catch (Err) {
                 console.error('GetState failed:', Err);
-                alert(
-                    "An error has occurred.\n" +
-                    "Please report error code #006 " +
-                    "to Sophie (sj483@sussex.ac.uk)."
+                ShowReportableErrorAlert(
+                    ErrorCodes.CoventryStateLookupFailed,
+                    "An error has occurred."
                 );
                 return null;
             }
@@ -55,14 +57,14 @@
             var Reason;
             if (State === -2) {
                 Reason = "<h1><b>Oops...</b></h1>" +
-                    "<p>Sorry, it appears that you clicked away from the experiment for too long.</p>"
-                "<p>This means that we will not be able to use your data &#128546;.</p>"
-                "<p>Your participation has been discontinued.</p>";
+                    "<p>Sorry, it appears that you clicked away from the experiment for too long.</p>" +
+                    "<p>This means that we will not be able to use your data &#128546;.</p>" +
+                    "<p>Your participation has been discontinued.</p>";
             } else if (State === -1) {
-                Reason = "<h1><b>Oops...</b></h1>"
-                "<p>Sorry, it appears that you clicked away from the experiment too many times.</p>"
-                "<p>This means that we will not be able to use your data &#128546;.</p>"
-                "<p>Your participation has been discontinued.</p>";
+                Reason = "<h1><b>Oops...</b></h1>" +
+                    "<p>Sorry, it appears that you clicked away from the experiment too many times.</p>" +
+                    "<p>This means that we will not be able to use your data &#128546;.</p>" +
+                    "<p>Your participation has been discontinued.</p>";
             } else {
                 Reason = "<p>Sorry, it appears that you were not giving us your full attention.</p>" +
                     "<p>This means that we will not be able to use your data &#128546;.</p>" +
