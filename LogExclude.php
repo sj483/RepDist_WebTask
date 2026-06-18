@@ -22,7 +22,9 @@ $ScreenHeight =  $Input['ScreenHeight'];
 if (boolval($PoolId)) {
     $PoolId = mysqli_real_escape_string($Conn, $PoolId);
 }
-$SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
+if (boolval($SubjectId)) {
+    $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
+}
 $OS = mysqli_real_escape_string($Conn, $OS);
 $Browser = mysqli_real_escape_string($Conn, $Browser);
 $ScreenWidth = mysqli_real_escape_string($Conn, $ScreenWidth);

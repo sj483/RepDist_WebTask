@@ -22,8 +22,12 @@ $PoolId = $Input['PoolId'];
 $SubjectId = $Input['SubjectId'];
 
 // Sanitize the inputs
-$PoolId = mysqli_real_escape_string($Conn, $PoolId);
-$SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
+if (boolval($PoolId)) {
+    $PoolId = mysqli_real_escape_string($Conn, $PoolId);
+}
+if (boolval($SubjectId)) {
+    $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
+}
 
 // Query the Register to see if there is a match
 // Set $Virgin and $State
