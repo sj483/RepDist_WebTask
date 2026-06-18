@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/GetTargetUrl.php';
-require __DIR__ . '/GetRegister.php';
+require __DIR__ . '/GetRegisterRow.php';
 require __DIR__ . '/Credentials.php';
 
 // Check that the Checkbox has been checked and return if not
