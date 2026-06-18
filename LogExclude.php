@@ -19,7 +19,9 @@ $OS = $Input['OS'];
 $Browser = $Input['Browser'];
 $ScreenWidth = $Input['ScreenWidth'];
 $ScreenHeight =  $Input['ScreenHeight'];
-$PoolId = mysqli_real_escape_string($Conn, $PoolId);
+if (boolval($PoolId)) {
+    $PoolId = mysqli_real_escape_string($Conn, $PoolId);
+}
 $SubjectId = mysqli_real_escape_string($Conn, $SubjectId);
 $OS = mysqli_real_escape_string($Conn, $OS);
 $Browser = mysqli_real_escape_string($Conn, $Browser);

@@ -40,7 +40,11 @@ if ($State !== 3 && $State !== 5) {
 }
 
 $GroupId = $SubjectRow["GroupId"];
-$ImgPerm = json_decode($SubjectRow["ImgPerm"], true);
+if (boolval($SubjectRow["ImgPerm"])) {
+    $ImgPerm = json_decode($SubjectRow["ImgPerm"], true);
+} else {
+    $ImgPerm = null;
+}
 $Assignment = array();
 $Assignment["GroupId"] = $GroupId;
 $Assignment["ImgPerm"] = $ImgPerm;
