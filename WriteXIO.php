@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 require __DIR__ . '/DotProduct.php';
 require __DIR__ . '/Credentials.php';
-require __DIR__ . '/GetRegisterRow.php';
+require __DIR__ . '/GetRegister.php';
 require __DIR__ . '/GetTargetUrl.php';
 
 // Grab the input

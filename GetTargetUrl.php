@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/GetRegisterRow.php';
+require_once __DIR__ . '/GetRegister.php';
 
 // A function that returns the TargetUrl given only a SubjectId ...
 // ... and an active SQL connection;
