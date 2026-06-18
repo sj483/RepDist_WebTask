@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '/Credentials.php';
+require_once __DIR__ . '/Credentials.php';
 
 $Conn = new mysqli($Servername, $Username, $Password, $Dbname);
 if ($Conn->connect_error) {

@@ -1,10 +1,10 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '/Credentials.php';
-require __DIR__ . '/FormatDateTimeStr.php';
-require __DIR__ . '/GetRegisterRow.php';
-require __DIR__ . '/GetTimeInterval.php';
-require __DIR__ . '/GetTargetUrl.php';
+require_once __DIR__ . '/Credentials.php';
+require_once __DIR__ . '/FormatDateTimeStr.php';
+require_once __DIR__ . '/GetRegisterRow.php';
+require_once __DIR__ . '/GetTimeInterval.php';
+require_once __DIR__ . '/GetTargetUrl.php';
 
 // Connect to the database:
 $Conn = new mysqli($Servername, $Username, $Password, $Dbname);

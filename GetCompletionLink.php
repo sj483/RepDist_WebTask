@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '/Credentials.php';
-require __DIR__ . '/CompletionLinks.php';
+require_once __DIR__ . '/Credentials.php';
+require_once __DIR__ . '/CompletionLinks.php';
 
 // Connect to the database
 $Conn = new mysqli($Servername, $Username, $Password, $Dbname);

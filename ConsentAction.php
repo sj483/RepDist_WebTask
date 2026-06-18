@@ -1,7 +1,7 @@
 <?php
-require __DIR__ . '/GetTargetUrl.php';
-require __DIR__ . '/GetRegisterRow.php';
-require __DIR__ . '/Credentials.php';
+require_once __DIR__ . '/GetTargetUrl.php';
+require_once __DIR__ . '/GetRegisterRow.php';
+require_once __DIR__ . '/Credentials.php';
 
 // Check that the Checkbox has been checked and return if not
 if (!isset($_POST['Checkbox']) || ($_POST['Checkbox'] != 'Check')) {

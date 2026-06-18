@@ -24,7 +24,7 @@ function GetTargetUrl($Conn, $SubjectId)
 		case -1:
 			// Clicked away for too often
 			return "./Coventry.html?SubjectId=$SubjectId&State=-1#";
-			
+
 		case 0:
 			return "./Consent.html?SubjectId=$SubjectId#";
 

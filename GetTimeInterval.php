@@ -8,7 +8,7 @@ function GetTimeInterval($A, $B)
     $Hr = date_diff($A, $B)->h;
     $Mi = date_diff($A, $B)->i;
     $Sc = date_diff($A, $B)->s;
-    $Interval = 
+    $Interval =
         ($Yr * 365.250 * 24 * 60 * 60) +
         ($Mo * 30.4375 * 24 * 60 * 60) +
         ($Dy * 24 * 60 * 60) +
@@ -18,7 +18,8 @@ function GetTimeInterval($A, $B)
     if ($A > $B) {
         $Interval = -1 * $Interval;
     } else {
-        $Interval =  1 * $Interval;
+        $Interval = 1 * $Interval;
     }
+
     return $Interval;
 }

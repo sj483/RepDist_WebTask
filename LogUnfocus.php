@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '/Credentials.php';
-require __DIR__ . '/GetRegisterRow.php';
+require_once __DIR__ . '/Credentials.php';
+require_once __DIR__ . '/GetRegisterRow.php';
 
 // Preallocate the result
 $Result = array();

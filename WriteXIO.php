@@ -1,9 +1,9 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '/DotProduct.php';
-require __DIR__ . '/Credentials.php';
-require __DIR__ . '/GetRegisterRow.php';
-require __DIR__ . '/GetTargetUrl.php';
+require_once __DIR__ . '/DotProduct.php';
+require_once __DIR__ . '/Credentials.php';
+require_once __DIR__ . '/GetRegisterRow.php';
+require_once __DIR__ . '/GetTargetUrl.php';
 
 // Grab the input
 $Input = json_decode(file_get_contents('php://input'), true);

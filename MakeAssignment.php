@@ -1,5 +1,6 @@
 <?php
-function MakeAssignment($SubjectId) {
+function MakeAssignment($SubjectId)
+{
     $Assignment = array();
 
     // Get the SubjectInt
@@ -10,10 +11,11 @@ function MakeAssignment($SubjectId) {
     srand($SubjectInt % 4294967295);
 
     // Choose a group
-    $Groups  = array(
-        'Ani','Art','Fac',
-        'Foo','Lin','Obj',
-        'Pla','Spa','Tex');
+    $Groups = array(
+        'Ani', 'Art', 'Fac',
+        'Foo', 'Lin', 'Obj',
+        'Pla', 'Spa', 'Tex'
+    );
     $GroupId = $Groups[rand(0, 8)];
     $Assignment['GroupId'] = $GroupId;
 
