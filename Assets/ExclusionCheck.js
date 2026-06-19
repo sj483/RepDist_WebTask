@@ -951,10 +951,11 @@ async function CheckExclusion() {
     Data2Send.ScreenWidth = ScreenWidth;
     Data2Send.ScreenHeight = ScreenHeight;
 
-    PostJson('./LogExclude.php',Data2Send);
-
 	// Redirect:
 	if (Exclude) {
+
+        PostJson('./LogExclude.php',Data2Send);
+
 	    if (Boolean(PoolId) && Boolean(SubjectId)) {
 	        window.location.replace(
                 './Exclude.html?PoolId='+PoolId+
