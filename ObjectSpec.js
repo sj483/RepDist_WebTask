@@ -94,6 +94,11 @@ var Trial = {
 // Specify the Feedback event
 var Feedback = {
     type: jsPsychHtmlButtonResponse,
+
+    // Pre-trial functions
+    on_start: function() {
+        PerfMetric = 0.9*PerfMetric + 0.1*Correct;
+    },
     
     // Set the feedback to display
     stimulus: function() {
@@ -101,6 +106,11 @@ var Feedback = {
             if (Correct) {
                 return '<p style="vertical-align:middle; margin: 0px 5px 30px; color:#00ff00; font-size:100px">&#10003;</p>';
             } else {
+                if ((PerfMetric<0.7) && (RT<1000)) {
+                    return '<p style="vertical-align:middle; margin: 0px 5px 30px; color:#ff0000; font-size:100px">&#10060;</p>' + 
+                        '<p style="vertical-align:middle; margin: 0px 5px 30px; color:#ff0000; font-size:100px">You are not doing very well and your response times are short.</p>' + 
+                        '<p style="vertical-align:middle; margin: 0px 5px 30px; color:#ff0000; font-size:100px">Inattention may result in being excluded or unpaid.</p>';
+                }
                 return '<p style="vertical-align:middle; margin: 0px 5px 30px; color:#ff0000; font-size:100px">&#10060;</p>';
             }
         } else {
@@ -115,6 +125,9 @@ var Feedback = {
     // Set the feedback duration (depends on whether a response was made)
     trial_duration: function() {
         if (ResponseMade) {
+            if ((PerfMetric<0.7) && (RT<1000)) {
+                return 6000;
+            }
             return 3000;
         } else {
             return 5000;
