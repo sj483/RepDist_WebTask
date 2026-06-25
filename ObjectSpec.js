@@ -107,7 +107,7 @@ var Feedback = {
                 return '<p style="vertical-align:middle; margin: 0px 5px 30px; color:#00ff00; font-size:100px">&#10003;</p>';
             } else {
                 if ((PerfMetric<0.7) && (RT<1000)) {
-                    return '<p style="vertical-align:middle; margin: 0px 5px 40px; color:#ff0000; font-size:40px">&#10060;<br />You are not doing very well and your response times are short.<br />Inattention may result in being excluded or unpaid.</p>';
+                    return '<p style="vertical-align:middle; margin: 0px 5px 30px; color:#ff0000; font-size:40px">&#10060;<br /><br />You are not doing very well and your response times are short.<br /><br />Inattention may result in being excluded or unpaid.</p>';
                 }
                 return '<p style="vertical-align:middle; margin: 0px 5px 30px; color:#ff0000; font-size:100px">&#10060;</p>';
             }
