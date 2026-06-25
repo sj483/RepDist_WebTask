@@ -42,7 +42,7 @@ n = numel(Ta.Correct);
 try
     mRtc = mean(Ta.RT(Ta.Correct),'omitmissing');
 catch
-    mRtc = nanmean(Ta.Correct); %#ok<NANMEAN>
+    mRtc = nanmean(Ta.RT(Ta.Correct)); %#ok<NANMEAN>
 end
 Tb.b0 = mdl.Coefficients.Estimate(1);
 Tb.b1 = mdl.Coefficients.Estimate(2);
