@@ -1,4 +1,4 @@
-function [dH,zH,nValid] = getResponseEntropy(Data)
+function [dH,pH,zH,nValid] = getResponseEntropy(Data)
 h = cellfun(@getH,Data.TItrainIO);
 nValid = cellfun(@getN,Data.TItrainIO);
 
@@ -10,6 +10,7 @@ else
     save('h0.mat','h0');
 end
 zH = (mean(h0)-h)./std(h0);
+pH = mean(h0<h',1)';
 dH = 3-h;
 return
 

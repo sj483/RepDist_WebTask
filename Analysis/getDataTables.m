@@ -37,7 +37,7 @@ close(fh);
 ProbeData = getProbeData(Data);
 
 %% Compute response entropy
-[dH,zH,nValid] = getResponseEntropy(Data);
+[dH,pH,zH,nValid] = getResponseEntropy(Data);
 
 %% Extract columns from Data to join
 Data2Add = table;
@@ -49,6 +49,7 @@ Data2Add.Age = years(Data.DateTime_Consent-Data.BMY);
 Data2Add.zAge = nan(size(Data2Add.Age));
 Data2Add = [Data2Add,Data(:,3:13)];
 Data2Add.dH = dH;
+Data2Add.pH = pH;
 Data2Add.zH = zH;
 Data2Add.nTrainR = nValid;
 
